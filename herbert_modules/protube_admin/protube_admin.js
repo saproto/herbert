@@ -25,6 +25,10 @@ nsp.on("connection", function(socket) {
     socket.on('skip', function() {
         protube.getNextVideo();
     });
+
+    socket.on('pause', function() {
+        protube.togglePause();
+    });
     
 });
 

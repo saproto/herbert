@@ -89,7 +89,8 @@
         });
 
         socket.on("playerState", function(data) {
-            if(data.playing == true) player.playVideo();
+            if(data.playing && !data.paused) player.playVideo();
+            else if(data.playing && data.paused) player.pauseVideo();
             else player.stopVideo();
         });
     }

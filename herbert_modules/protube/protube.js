@@ -15,7 +15,8 @@ var pin = 0;
 generatePin();
 
 var status = {
-    "playing" : false
+    "playing" : false,
+    "paused" : false
 };
 
 module.exports.queue = queue;
@@ -45,7 +46,13 @@ module.exports.getStatus = function() {
 module.exports.setTime = function(time) {
     current.progress = time;
     ee.emit("progressChange", current.progress);
-}
+};
+
+module.exports.togglePause = function() {
+    if(status.paused) status.paused = false;
+    else status.paused = true;
+    ee.emit("protubeStateChange", status);
+};
 
 /**
  * Returns current pin
@@ -160,7 +167,7 @@ module.exports.addToQueue = function(data, socket) {
  */
 function incrementTimeAndCheckNext() {
     if(status.playing) {
-        current.progress++;
+        if(!status.paused) current.progress++;
         if(current.progress > current.duration) getNextVideo();
     }else{
         getNextVideo();

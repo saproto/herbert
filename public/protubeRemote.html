@@ -20,7 +20,7 @@
 <input type="text" id="time" />
 <button id="submitTime">Submit time</button>
 <br />
-<button id="skip">Skip!</button>
+<button id="skip">Skip</button><button id="pause">Pause</button>
 <br /><br />
 <b>PIN: </b><span id="pinDisplay">...</span>
 
@@ -58,6 +58,11 @@
     $("#skip").click(function(e) {
         e.preventDefault();
         admin.emit("skip");
+    });
+
+    $("#pause").click(function(e) {
+        e.preventDefault();
+        admin.emit("pause");
     });
 
     function logToScreen(text) {
