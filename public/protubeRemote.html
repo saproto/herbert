@@ -1,0 +1,68 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+    <link rel="stylesheet" href="stylesheets/style.css" />
+
+    <title>Remote</title>
+</head>
+<body>
+
+<div id="log" style="height: 200px; overflow: scroll;"></div>
+
+<input type="text" id="ytId" />
+<button id="submit">Submit</button>
+<br />
+<input type="text" id="pin" />
+<button id="submitPin">Submit pin</button>
+<br />
+<input type="text" id="time" />
+<button id="submitTime">Submit time</button>
+<br />
+<button id="skip">Skip!</button>
+<br /><br />
+<b>PIN: </b><span id="pinDisplay">...</span>
+
+<script>
+    var socket = io('/protube-remote');
+    var pin = io('/protube-pin');
+    var admin = io('/protube-admin');
+
+    pin.on("pin", function(data) {
+        $("#pinDisplay").html(data);
+    });
+
+    socket.on("toast", function(data) {
+        logToScreen(data);
+    });
+
+    $("#submit").click(function(e) {
+        e.preventDefault();
+        var addThis = { "id" : $("#ytId").val() };
+        socket.emit("add", addThis);
+    });
+
+    $("#submitPin").click(function(e) {
+        e.preventDefault();
+        var addThis = { "pin" : $("#pin").val() };
+        socket.emit("authenticate", addThis);
+    });
+
+    $("#submitTime").click(function(e) {
+        e.preventDefault();
+        var addThis = $("#time").val();
+        admin.emit("setTime", addThis);
+    });
+
+    $("#skip").click(function(e) {
+        e.preventDefault();
+        admin.emit("skip");
+    });
+
+    function logToScreen(text) {
+        $("#log").prepend(text+"<br />");
+    }
+</script>
+</body>
+</html>

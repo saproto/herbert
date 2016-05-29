@@ -1,0 +1,26 @@
+[
+  {
+    "name" : "protube",
+    "active" : true
+  },
+
+  {
+    "name" : "protube_screen",
+    "active" : true
+  },
+
+  {
+    "name" : "protube_remote",
+    "active" : true
+  },
+
+  {
+    "name" : "protube_admin",
+    "active" : true
+  },
+
+  {
+    "name" : "protube_pin",
+    "active" : true
+  }
+]

@@ -1,0 +1,99 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+    <link rel="stylesheet" href="stylesheets/style.css" />
+
+    <title>Screen</title>
+</head>
+<body>
+
+<div id="log" style="height: 200px; overflow: scroll;"></div>
+
+<div id="time"></div>
+<div id="title"></div>
+<div id="duration"></div>
+
+<div id="player"></div>
+
+<div id="queue"></div>
+
+<script>
+    var tag = document.createElement('script');
+
+    tag.src = "https://www.youtube.com/iframe_api";
+    var firstScriptTag = document.getElementsByTagName('script')[0];
+    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+    var player;
+    function onYouTubeIframeAPIReady() {
+        player = new YT.Player('player', {
+            height: '390',
+            width: '640',
+            videoId: '',
+            events: {
+                'onReady': onYouTubePlayerReady,
+                'onStateChange': onYouTubePlayerStateChange
+            }
+        });
+
+        console.log(player);
+    }
+
+    var socket = io('/protube-screen');
+
+    socket.on("ytInfo", function(data) {
+        logToScreen(JSON.stringify(data));
+        $("#duration").html(data.duration);
+        $("#title").html(data.title);
+        $("#time").html(data.progress);
+    });
+
+    function logToScreen(text) {
+        $("#log").prepend(text+"<br />");
+    }
+
+    function youtube_parser(url){
+        var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+        var match = url.match(regExp);
+        return (match&&match[7].length==11)? match[7] : false;
+    }
+
+    function onYouTubePlayerReady() {
+        socket.emit("screenReady");
+
+        socket.on("reconnect", function() {
+            socket.emit("screenReady");
+        });
+
+        socket.on("ytInfo", function(data) {
+            player.cueVideoById(data.id);
+        });
+
+        socket.on("queue", function(data) {
+            console.log(data);
+            $("#queue").html("");
+            for(var i in data) {
+                $("#queue").append(data[i].title + "<br />");
+            }
+        });
+
+        socket.on("progress", function(data) {
+            console.log(data);
+            var progress = parseInt(data);
+            if(player.getCurrentTime() < progress-1 || player.getCurrentTime() > progress+1 || progress == 0) player.seekTo(progress);
+        });
+
+        socket.on("playerState", function(data) {
+            if(data.playing == true) player.playVideo();
+            else player.stopVideo();
+        });
+    }
+
+    function onYouTubePlayerStateChange() {
+        //
+    }
+</script>
+</body>
+</html>
