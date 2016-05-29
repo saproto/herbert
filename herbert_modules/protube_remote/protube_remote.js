@@ -14,7 +14,7 @@ nsp.on("connection", function(socket) {
     var authenticated = false;
     var pin;
 
-    console.log("remote connected");
+    console.log("[protube_remote] remote connected");
 
     socket.on("authenticate", function(data) {
 
@@ -25,7 +25,7 @@ nsp.on("connection", function(socket) {
 
             socket.emit("toast", "Authenticated");
 
-            console.log("remote authenticated");
+            console.log("[protube_remote] remote authenticated");
 
             protube.generatePin();
 

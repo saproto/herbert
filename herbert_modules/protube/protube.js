@@ -96,7 +96,7 @@ module.exports.addToQueue = function(data, socket) {
         url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet,contentDetails&id=' + data.id
     }, function(err, res) {
         if(err) {
-            console.log("Adding video resulted in error. "+err);
+            console.log("[protube] Adding video resulted in error. "+err);
         } else {
             
             var response = JSON.parse(res.buffer.toString());
@@ -175,7 +175,7 @@ function getNextVideo() {
         status.playing = true;
         ee.emit("protubeStateChange", status);
         current = queue.shift();
-        console.log("Playing "+current.title);
+        console.log("[protube] Playing "+current.title);
         ee.emit("videoChange", current);
         ee.emit("queueUpdated", queue);
         ee.emit("progressChange", current.progress);

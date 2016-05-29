@@ -12,11 +12,11 @@ var nsp = io.of('/protube-screen');
 
 nsp.on("connection", function(socket) {
 
-    console.log("screen connected");
+    console.log("[protube_screen] screen connected");
 
     socket.on("screenReady", function(data) {
 
-        console.log("screen ready");
+        console.log("[protube_screen] screen ready");
 
         socket.emit("queue", protube.getQueue());
         

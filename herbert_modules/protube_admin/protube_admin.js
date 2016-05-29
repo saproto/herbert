@@ -13,7 +13,7 @@ var nsp = io.of('/protube-admin');
 
 nsp.on("connection", function(socket) {
 
-    console.log("admin connected");
+    console.log("[protube_admin] admin connected");
 
     socket.emit("queue", protube.queue);
     socket.emit("ytInfo", protube.current);
