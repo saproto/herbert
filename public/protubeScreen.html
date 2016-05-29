@@ -47,7 +47,10 @@
         logToScreen(JSON.stringify(data));
         $("#duration").html(data.duration);
         $("#title").html(data.title);
-        $("#time").html(data.progress);
+    });
+
+    socket.on("progress", function(data) {
+        $("#time").html(data);
     });
 
     function logToScreen(text) {
