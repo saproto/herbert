@@ -1,0 +1,40 @@
+<html>
+<head>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+    <script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+
+    <script src="js/remote.js"></script>
+
+    <link rel="stylesheet" href="css/remote.css" />
+
+    <title>Remote</title>
+</head>
+
+<body>
+
+<div id="connecting">
+    Connecting...
+</div>
+
+<div id="connected">
+    <div id="queue">
+
+    </div>
+
+    <div id="login">
+        <input type="number" name="pin" id="pin" />
+        <button id="doLogin">Login</button>
+    </div>
+
+    <div id="loggedIn">
+        <div id="search">
+            <form action="" method="get">
+                <input type="text" id="searchBox" placeholder="Search" />
+            </form>
+            <div id="results"></div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
