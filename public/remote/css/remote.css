@@ -1,12 +1,30 @@
-@import url(https://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300,100italic,100);
+@import url("https://fonts.googleapis.com/css?family=Roboto:400,400italic,500,500italic,700,700italic,900,900italic,300italic,300,100italic,100");
 
 body {
-    background-color: #000;
+    background-color: #111;
     color: #fff;
     margin: 0;
     padding: 0;
 
     font-family: 'Roboto', sans-serif;
+}
+
+input {
+    background-color: #000;
+    color: #fff;
+    border: #c3ff00 1px solid;
+    font-size: 16px;
+    padding: 20px;
+    width: 100%;
+}
+
+button {
+    background-color: #000;
+    color: #fff;
+    border: #c3ff00 1px solid;
+    font-size: 16px;
+    padding: 20px;
+    width: 100%;
 }
 
 #connecting {
@@ -17,14 +35,172 @@ body {
     display: none;
 }
 
+#queue {
+    height: 100px;
+}
+
+#queue img {
+    height: 100px;
+}
+
 #login {
     display: block;
+    width: 70%;
+    margin-left: 15%;
+    margin-top: 5%;
 }
 
 #loggedIn {
     display: none;
+    margin: 50px;
 }
 
 #searchBox {
-    width: 100%;
+    position: absolute;
+    top: 100px;
+    width: 90%;
+}
+
+.result {
+    background-color: #222;
+    margin-bottom: 10px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.result h1 {
+    font-size: 14px;
+    margin: 0 0 5px;
+    padding: 0 0 0 15px;
+}
+
+.result h2 {
+    font-size: 10px;
+    margin: 0 0 5px;
+    padding: 0 0 0 15px;
+}
+
+.result img {
+    float: left;
+}
+
+.result:hover {
+    background-color: #444;
+}
+
+/*** Keypad ***/
+#keypad {
+    display: none;
+}
+
+#keypad p {
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 14px;
+    margin: 20px 0;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.5);
+}
+
+#pincode {
+    text-align: center;
+    color: #FFFFFF;
+    font-size: 20px;
+    background: #222;
+    box-shadow: inset 1px 1px 1px #000;
+    text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+    padding: 5px 0;
+    width: 186px !important;
+    margin: 10px auto 20px auto;
+    height: 25px;
+    line-height: 25px;
+}
+
+.keyboard-row {
+    overflow: hidden;
+    width: 196px;
+    margin: 10px auto;
+}
+
+.keyboard-key {
+    padding: 0 20px;
+    background: #474747;
+    border-top: 1px solid #858585;
+    border-bottom: 1px solid #343434;
+    border-left: 1px solid #424242;
+    border-right: 1px solid #424242;
+    margin: 0 5px;
+    color: #FFF;
+    cursor: pointer;
+    text-shadow: 0 1px 1px rgba(0,0,0,0.3);
+    float: left;
+    width: 13px;
+    height: 45px;
+    line-height: 45px;
+    text-align: center;
+    font-size: 14px;
+}
+
+.keyboard-key:first-child:last-child {
+    margin-left: 70px;
+}
+
+.keyboard-key:hover {
+    -webkit-animation: touched 0.5s;
+    -moz-animation: touched 0.5s;
+    animation: touched 0.5s;
+}
+
+.keyboard-key.invisible {
+    visibility: hidden;
+}
+
+.keyboard-key.back {
+    background-image: url("http://protube.saproto.nl/remote/img/backspace.png");
+    background-repeat: no-repeat;
+    background-position: center center;
+}
+
+@-webkit-keyframes touched {
+    0%, 100%  {
+        background-color: #474747;
+    }
+    10% {
+        background-color: #9C0;
+    }
+}
+
+@-moz-keyframes touched {
+    0%, 100% {
+        background-color: #474747;
+    }
+    10% {
+        background-color: #9C0;
+    }
+}
+
+@keyframes touched {
+    0%, 100% {
+        background-color: #474747;
+    }
+    10% {
+        background-color: #9C0;
+    }
+}
+
+@-moz-keyframes error {
+    0%,
+    100% { background: #111; }
+    10% { background: #C00; }
+}
+
+@-webkit-keyframes error {
+    0%,
+    100% { background: #111; }
+    10% { background: #C00; }
+}
+
+@keyframes error {
+    0%,
+    100% { background: #111; }
+    10% { background: #C00; }
 }

@@ -5,6 +5,8 @@
 
     <script src="js/remote.js"></script>
 
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+
     <link rel="stylesheet" href="css/remote.css" />
 
     <title>Remote</title>
@@ -12,29 +14,52 @@
 
 <body>
 
-<div id="connecting">
-    Connecting...
-</div>
-
-<div id="connected">
-    <div id="queue">
-
+    <div id="connecting">
+        Connecting...
     </div>
 
-    <div id="login">
-        <input type="number" name="pin" id="pin" />
-        <button id="doLogin">Login</button>
-    </div>
+    <div id="connected">
+        <div id="queue">
+            <!-- Filled by JS -->
+        </div>
 
-    <div id="loggedIn">
-        <div id="search">
-            <form action="" method="get">
-                <input type="text" id="searchBox" placeholder="Search" />
-            </form>
-            <div id="results"></div>
+        <div id="login">
+            <div id="pincode">
+                <!-- Filled by JS -->
+            </div>
+            <div class="keyboard-row">
+                <div class="keyboard-key">7</div>
+                <div class="keyboard-key">8</div>
+                <div class="keyboard-key">9</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="keyboard-key">4</div>
+                <div class="keyboard-key">5</div>
+                <div class="keyboard-key">6</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="keyboard-key">1</div>
+                <div class="keyboard-key">2</div>
+                <div class="keyboard-key">3</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="keyboard-key invisible"></div>
+                <div class="keyboard-key">0</div>
+                <div class="keyboard-key back"></div>
+            </div>
+        </div>
+
+        <div id="loggedIn">
+            <div id="search">
+                <form action="" method="get">
+                    <input type="text" id="searchBox" placeholder="Search" autocomplete="off" />
+                </form>
+                <div id="results">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
 </body>
 </html>
