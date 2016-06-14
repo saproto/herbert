@@ -44,9 +44,9 @@ function onYouTubePlayerReady() {
     });
 
     screen.on("queue", function(data) {
-        $("#queue").html("");
+        $("#queue ul").html("");
         for(var i in data) {
-            $("#queue").append('<img src="http://img.youtube.com/vi/' + data[i].id + '/0.jpg" />');
+            $("#queue ul").append('<li><img src="http://img.youtube.com/vi/' + data[i].id + '/0.jpg" /><h1>' + data[i].title +  '</h1></li>');
         }
     });
 
