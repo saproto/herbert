@@ -41,6 +41,7 @@ function onYouTubePlayerReady() {
 
     screen.on("ytInfo", function(data) {
         player.cueVideoById(data.id);
+        player.setPlaybackQuality('highres');
     });
 
     screen.on("queue", function(data) {
@@ -52,16 +53,69 @@ function onYouTubePlayerReady() {
 
     screen.on("progress", function(data) {
         var progress = parseInt(data);
-        if(player.getCurrentTime() < progress-1 || player.getCurrentTime() > progress+1 || progress == 0) player.seekTo(progress);
+        if(player.getCurrentTime() < progress-1 || player.getCurrentTime() > progress+1 || progress == 0) {
+            player.seekTo(progress);
+            setProgressBar(player.getDuration(), progress);
+        }
     });
 
     screen.on("playerState", function(data) {
-        if(data.playing && !data.paused) player.playVideo();
-        else if(data.playing && data.paused) player.pauseVideo();
-        else player.stopVideo();
+        if(data.playing && !data.paused) {
+            stopIdle();
+            player.playVideo();
+
+        } else if(data.playing && data.paused) {
+            player.pauseVideo();
+            stopProgressBar(true);
+
+        } else {
+            player.stopVideo();
+            stopProgressBar(false);
+            startIdle();
+        }
     });
 }
 
-function onYouTubePlayerStateChange() {
-    //
+function onYouTubePlayerStateChange(newState) {
+    if(newState.data == 1) setProgressBar();
+}
+
+function setProgressBar() {
+    var current = player.getCurrentTime();
+    var total = player.getDuration();
+
+    var progressBar = $("#progressBar");
+    var percentage = current/total * 100;
+
+    progressBar.stop();
+
+    progressBar.css({
+        width: percentage + '%'
+    });
+
+    progressBar.animate({
+        width: '100%'
+    }, (total - current) * 1000, 'linear', function(){
+        $(this).css({
+            width: '0%'
+        });
+    });
+}
+
+function stopProgressBar(reset) {
+    var progressBar = $("#progressBar");
+    progressBar.stop();
+    if(reset) progressBar.css({ width: '0%' });
+}
+
+function startIdle() {
+    $("#queue").hide(0);
+    $("#progressBar").hide(0);
+    $("#slideshow").show(0);
+}
+
+function stopIdle() {
+    $("#slideshow").hide(0);
+    $("#queue").show(0);
+    $("#progressBar").show(0);
 }

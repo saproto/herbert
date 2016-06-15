@@ -53,6 +53,12 @@ nsp.on("connection", function(socket) {
                     url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet&maxResults=15&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
                 }, function(err, res) {
                     var response = JSON.parse(res.buffer.toString());
+                    var 
+
+                    http_request.get({
+                        url: 'https://'
+                    })
+
                     socket.emit("searchResults", response);
                 });
             });
