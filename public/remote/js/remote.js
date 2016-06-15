@@ -78,8 +78,8 @@ $(document).ready(function() {
 
         results.html("");
 
-        for(var i in data.items) {
-            results.append(generateResult(data.items[i]));
+        for(var i in data) {
+            results.append(generateResult(data[i]));
         }
 
         $(".result").each(function(i) {
@@ -93,7 +93,7 @@ $(document).ready(function() {
 });
 
 function generateResult(item) {
-    var result = '<div class="result" ytId="' + item.id.videoId + '"><img src="http://img.youtube.com/vi/' + item.id.videoId + '/0.jpg" width="20%" /><h1>' + item.snippet.title + '</h1><h2>' + item.snippet.channelTitle +  '</h2><div style="clear: both;"></div></div>';
+    var result = '<div class="result" ytId="' + item.id + '"><img src="http://img.youtube.com/vi/' + item.id + '/0.jpg" width="20%" /><h1>' + item.title + '</h1><h2>' + item.channelTitle +  '</h2><h3>' + item.duration + '</h3><div style="clear: both;"></div></div>';
 
     return result;
 }
