@@ -5,6 +5,8 @@
  */
 
 var http_request = require('http-request');
+var moment = require('moment');
+require("moment-duration-format");
 
 var protube = require('../../moduleLoader').loaded.protube;
 
@@ -50,16 +52,44 @@ nsp.on("connection", function(socket) {
             
             socket.on("search", function(data) {
                 http_request.get({
-                    url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet&maxResults=15&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
+                    url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet&maxResults=50&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
                 }, function(err, res) {
-                    var response = JSON.parse(res.buffer.toString());
-                    var 
+
+                    var searchResponse = JSON.parse(res.buffer.toString());
+                    
+                    var commaId = '';
+                    
+                    for(var i = 0; i<searchResponse.items.length; i++) {
+                        commaId += searchResponse.items[i].id.videoId + ',';
+                    }
+
+                    commaId = commaId.substr(0, commaId.length-1);
 
                     http_request.get({
-                        url: 'https://'
-                    })
+                        url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=contentDetails&maxResults=50&id='+commaId
+                    }, function(err, res) {
 
-                    socket.emit("searchResults", response);
+                        var detailsResponse = JSON.parse(res.buffer.toString());
+
+                        var returnResponse = [];
+
+                        for(var i = 0; i<detailsResponse.items.length; i++) {
+
+                            var duration = moment.duration(detailsResponse.items[i].contentDetails.duration);
+
+                            if(duration.asSeconds() < process.env.YOUTUBE_MAX_DURATION) {
+                                returnResponse.push({
+                                    "id" : searchResponse.items[i].id.videoId,
+                                    "title" : searchResponse.items[i].snippet.title,
+                                    "channelTitle" : searchResponse.items[i].snippet.channelTitle,
+                                    "duration" : duration.format("mm:ss")
+                                });
+                            }
+                        }
+
+                        socket.emit("searchResults", returnResponse);
+
+                    });
                 });
             });
 
