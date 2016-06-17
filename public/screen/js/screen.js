@@ -5,6 +5,7 @@ var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
 var player;
+
 function onYouTubeIframeAPIReady() {
     player = new YT.Player('player', {
         height: '100%',
@@ -111,6 +112,7 @@ function stopProgressBar(reset) {
 function startIdle() {
     $("#queue").hide(0);
     $("#progressBar").hide(0);
+    $("#progressBarBackground").hide(0);
     $("#slideshow").show(0);
 }
 
@@ -118,4 +120,5 @@ function stopIdle() {
     $("#slideshow").hide(0);
     $("#queue").show(0);
     $("#progressBar").show(0);
+    $("#progressBarBackground").show(0);
 }
