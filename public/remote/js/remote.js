@@ -28,6 +28,7 @@ $(document).ready(function() {
     $('form').bind('submit', function(e){
         e.preventDefault();
         remote.emit("search", $("#searchBox").val());
+        $("#results").html("Loading...");
     });
 
     $("#pincode").html("");
@@ -101,7 +102,15 @@ $(document).ready(function() {
 });
 
 function generateResult(item) {
-    var result = '<div class="result" ytId="' + item.id + '"><img src="http://img.youtube.com/vi/' + item.id + '/0.jpg" width="20%" /><h1>' + item.title + '</h1><h2>' + item.channelTitle +  '</h2><h3>' + item.duration + '</h3><div style="clear: both;"></div></div>';
+    var result = '<div class="result" ytId="' + item.id + '">' +
+        '<img src="http://img.youtube.com/vi/' + item.id + '/0.jpg" />' +
+        '<div>' +
+        '<h1>' + item.title + '</h1>' +
+        '<h2>' + item.channelTitle +  '</h2>' +
+        '<h3>' + item.duration + '</h3>' +
+        '</div>' +
+        '<div style="clear: both;"></div>' +
+        '</div>';
 
     return result;
 }
