@@ -41,7 +41,7 @@ html, body {
     margin: 0;
     padding: 0;
 
-    color: #008800;
+    color: #c1ff00;
 }
 
 #progressBar {
@@ -51,7 +51,7 @@ html, body {
     width: 0;
     height: 5px;
 
-    background-color: #008800;
+    background-color: #c1ff00;
 
     z-index: 500;
 }
@@ -111,7 +111,7 @@ html, body {
 }
 
 #pin h1 {
-    color: #008800;
+    color: #c1ff00;
     font-size: 12px;
 
     margin: 0;
