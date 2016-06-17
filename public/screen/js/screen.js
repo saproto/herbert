@@ -53,7 +53,7 @@ function onYouTubePlayerReady() {
 
     screen.on("progress", function(data) {
         var progress = parseInt(data);
-        if(player.getCurrentTime() < progress-1 || player.getCurrentTime() > progress+1 || progress == 0) {
+        if(player.getCurrentTime() != progress+1 || progress == 0) {
             player.seekTo(progress);
             setProgressBar(player.getDuration(), progress);
         }

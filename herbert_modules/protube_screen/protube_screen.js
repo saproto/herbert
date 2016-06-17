@@ -22,7 +22,7 @@ nsp.on("connection", function(socket) {
         
         socket.emit("ytInfo", protube.getCurrent());
         socket.emit("progress", protube.getCurrent().progress);
-        socket.emit("playerState", protube.getStatus().playing);
+        socket.emit("playerState", protube.getStatus());
     });
 
 });
@@ -47,4 +47,4 @@ function emitProgress() {
     nsp.emit("progress", protube.getCurrent().progress);
 }
 
-var emitCurrentInterval = setInterval(emitProgress, 5000);
+//var emitCurrentInterval = setInterval(emitProgress, 5000);
