@@ -8,6 +8,14 @@ $(document).ready(function() {
         $("#connected").show(0);
     });
 
+    remote.on("reconnect", function() {
+        location.reload();
+    });
+
+    remote.on("disconnect", function() {
+        location.reload();
+    });
+
     remote.on("queue", function(data) {
         var queue = $("#queue");
         queue.html("");

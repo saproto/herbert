@@ -46,6 +46,11 @@ nsp.on("connection", function(socket) {
 
             protube.generatePin();
 
+            setTimeout(function() {
+                socket.disconnect();
+                console.log("[protube_remote] remote timed out");
+            }, process.env.REMOTE_TIMEOUT * 1000);
+
             socket.on("add", function(data) {
                 protube.addToQueue(data, socket);
             });
