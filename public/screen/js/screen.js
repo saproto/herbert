@@ -34,9 +34,16 @@ pin.on("pin", function(data) {
 });
 
 function onYouTubePlayerReady() {
+    $("#connecting").hide(0);
+
     screen.emit("screenReady");
 
+    screen.on("disconnect", function() {
+        $("#connecting").show(0);
+    })
+
     screen.on("reconnect", function() {
+        $("#connecting").hide(0);
         screen.emit("screenReady");
     });
 
