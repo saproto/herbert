@@ -18,8 +18,10 @@ nsp.on("connection", function(socket) {
 
         console.log("[protube_screen] screen ready");
 
+        socket.emit("radioStation", protube.getCurrentRadioStation());
+
         socket.emit("queue", protube.getQueue());
-        
+
         socket.emit("ytInfo", protube.getCurrent());
         socket.emit("progress", protube.getCurrent().progress);
         socket.emit("playerState", protube.getStatus());
@@ -41,6 +43,10 @@ ee.on("protubeStateChange", function(data) {
 
 ee.on("queueUpdated", function(data) {
     nsp.emit("queue", data);
+});
+
+ee.on("radioStation", function(data) {
+    nsp.emit("radioStation", data);
 });
 
 function emitProgress() {

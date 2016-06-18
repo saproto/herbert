@@ -8,6 +8,14 @@ var http_request = require('http-request');
 
 var ee = require('../../events');
 
+var radioStations = [
+    {
+        'name' : 'beeRadio',
+        'url' : 'http://listen.beeradio.nl/main'
+    }
+];
+var currentRadioStation = 0;
+
 var queue = [];
 var current = {};
 var pin = 0;
@@ -16,7 +24,8 @@ generatePin();
 
 var status = {
     "playing" : false,
-    "paused" : false
+    "paused" : false,
+    "playingRadio" : true
 };
 
 module.exports.queue = queue;
@@ -24,11 +33,36 @@ module.exports.current = current;
 module.exports.status = status;
 
 /**
+ * Returns current radio station.
+ * @returns {{name, url}|*}
+ */
+module.exports.getCurrentRadioStation = function() {
+    return radioStations[currentRadioStation];
+};
+
+/**
+ * Returns radio stations.
+ * @returns {*[]}
+ */
+module.exports.getRadioStations = function() {
+    return radioStations;
+};
+
+/**
+ * Chooses random radio station from list, sets it as current and returns that station.
+ * @returns {{name, url}|*}
+ */
+function getRadioStation() {
+    currentRadioStation = getRandomInt(0, radioStations.length);
+    return radioStations[currentRadioStation];
+};
+
+/**
  * Export for getNextVideo function.
  */
 module.exports.getNextVideo = function() {
     getNextVideo();
-}
+};
 
 /**
  * Returns current video
@@ -196,11 +230,20 @@ function incrementTimeAndCheckNext() {
 }
 
 /**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * Using Math.round() will give you a non-uniform distribution!
+ */
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+/**
  * Gets next video from the queue, if available, and makes it current.
  */
 function getNextVideo() {
     if(queue.length > 0) {
         status.playing = true;
+        status.playingRadio = false;
         ee.emit("protubeStateChange", status);
         current = queue.shift();
         console.log("[protube] Playing "+current.title);
@@ -211,6 +254,8 @@ function getNextVideo() {
     }else{
         if(status.playing) {
             status.playing = false;
+            status.playingRadio = true;
+            ee.emit("radioStation", getRadioStation());
             ee.emit("protubeStateChange", status);
             current = {};
             ee.emit("videoChange", current);

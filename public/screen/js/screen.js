@@ -33,6 +33,14 @@ pin.on("pin", function(data) {
     $("#pinCode").html(data);
 });
 
+var radio = document.createElement("AUDIO");
+
+var radioStation = {};
+
+screen.on("radioStation", function(data) {
+    radioStation = data;
+});
+
 function onYouTubePlayerReady() {
     $("#connecting").hide(0);
 
@@ -40,7 +48,7 @@ function onYouTubePlayerReady() {
 
     screen.on("disconnect", function() {
         $("#connecting").show(0);
-    })
+    });
 
     screen.on("reconnect", function() {
         $("#connecting").hide(0);
@@ -121,6 +129,9 @@ function startIdle() {
     $("#progressBar").hide(0);
     $("#progressBarBackground").hide(0);
     $("#slideshow").show(0);
+
+    radio.src = radioStation.url;
+    radio.play();
 }
 
 function stopIdle() {
@@ -128,4 +139,6 @@ function stopIdle() {
     $("#queue").show(0);
     $("#progressBar").show(0);
     $("#progressBarBackground").show(0);
+
+    radio.src = "";
 }
