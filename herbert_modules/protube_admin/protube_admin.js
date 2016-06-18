@@ -22,6 +22,14 @@ nsp.on("connection", function(socket) {
         protube.setTime(data);
     });
 
+    socket.on("setRadioVolume", function(data) {
+        protube.setRadioVolume(data);
+    });
+
+    socket.on("setYoutubeVolume", function(data) {
+        protube.setYoutubeVolume(data);
+    });
+
     socket.on('skip', function() {
         protube.getNextVideo();
     });
@@ -43,4 +51,8 @@ ee.on("videoChange", function(data) {
 
 ee.on("protubeStateChange", function(data) {
     nsp.emit("playerState", data);
+});
+
+ee.on("volumeChange", function(data) {
+    nsp.emit("volume", data);
 });

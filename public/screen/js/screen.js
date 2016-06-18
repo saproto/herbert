@@ -90,6 +90,11 @@ function onYouTubePlayerReady() {
             startIdle();
         }
     });
+
+    screen.on("volume", function(data) {
+        player.setVolume(data.youtube);
+        radio.volume = data.radio / 100;
+    });
 }
 
 function onYouTubePlayerStateChange(newState) {

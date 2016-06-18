@@ -20,6 +20,12 @@
 <input type="text" id="time" />
 <button id="submitTime">Submit time</button>
 <br />
+<input type="text" id="radioVolume" />
+<button id="submitRadioVolume">Submit radio volume</button>
+<br />
+<input type="text" id="youtubeVolume" />
+<button id="submitYoutubeVolume">Submit Youtube volume</button>
+<br />
 <button id="skip">Skip</button><button id="pause">Pause</button>
 <br /><br />
 <b>PIN: </b><span id="pinDisplay">...</span>
@@ -53,6 +59,18 @@
         e.preventDefault();
         var addThis = $("#time").val();
         admin.emit("setTime", addThis);
+    });
+
+    $("#submitRadioVolume").click(function(e) {
+        e.preventDefault();
+        var radioVolume = $("#radioVolume").val();
+        admin.emit("setRadioVolume", radioVolume);
+    });
+
+    $("#submitYoutubeVolume").click(function(e) {
+        e.preventDefault();
+        var youtubeVolume = $("#youtubeVolume").val();
+        admin.emit("setYoutubeVolume", youtubeVolume);
     });
 
     $("#skip").click(function(e) {

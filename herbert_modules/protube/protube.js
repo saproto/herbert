@@ -20,6 +20,14 @@ var queue = [];
 var current = {};
 var pin = 0;
 
+var youtubeVolume = 100;
+var radioVolume = 100;
+
+var volume = {
+    "youtube" : 100,
+    "radio" : 100
+};
+
 generatePin();
 
 var status = {
@@ -31,6 +39,21 @@ var status = {
 module.exports.queue = queue;
 module.exports.current = current;
 module.exports.status = status;
+
+module.exports.setYoutubeVolume = function(youtubeVolume) {
+    volume.youtube = youtubeVolume;
+    ee.emit("volumeChange", volume);
+};
+
+module.exports.setRadioVolume = function(radioVolume) {
+    volume.radio = radioVolume;
+    ee.emit("volumeChange", volume);
+};
+
+module.exports.getVolume = function() {
+    return volume;
+};
+
 
 /**
  * Returns current radio station.
