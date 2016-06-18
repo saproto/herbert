@@ -53,7 +53,7 @@ module.exports.getRadioStations = function() {
  * @returns {{name, url}|*}
  */
 function getRadioStation() {
-    currentRadioStation = getRandomInt(0, radioStations.length);
+    currentRadioStation = getRandomInt(0, radioStations.length-1);
     return radioStations[currentRadioStation];
 };
 
