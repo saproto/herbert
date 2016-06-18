@@ -46,5 +46,3 @@ ee.on("queueUpdated", function(data) {
 function emitProgress() {
     nsp.emit("progress", protube.getCurrent().progress);
 }
-
-//var emitCurrentInterval = setInterval(emitProgress, 5000);

@@ -32,14 +32,6 @@ nsp.on("connection", function(socket) {
     
 });
 
-/**
- * Emits current video to all connected screens.
- * This should run on a 1 second interval.
- */
-function emitCurrent() {
-    nsp.emit("ytInfo", protube.getCurrent());
-}
-
 ee.on("progressChange", function(data) {
     nsp.emit("progress", data);
 });
@@ -52,5 +44,3 @@ ee.on("videoChange", function(data) {
 ee.on("protubeStateChange", function(data) {
     nsp.emit("playerState", data);
 });
-
-var emitCurrentInterval = setInterval(emitCurrent, 5000);

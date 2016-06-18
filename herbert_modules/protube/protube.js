@@ -23,6 +23,9 @@ module.exports.queue = queue;
 module.exports.current = current;
 module.exports.status = status;
 
+/**
+ * Export for getNextVideo function.
+ */
 module.exports.getNextVideo = function() {
     getNextVideo();
 }
@@ -35,19 +38,34 @@ module.exports.getCurrent = function() {
     return current;
 };
 
+/**
+ * Returns Protube queue
+ * @returns {Array}
+ */
 module.exports.getQueue = function() {
     return queue;
 };
 
+/**
+ * Returns playback status
+ * @returns {{playing: boolean, paused: boolean}}
+ */
 module.exports.getStatus = function() {
     return status;
 };
 
+/**
+ * Sets progress to given time in seconds.
+ * @param time
+ */
 module.exports.setTime = function(time) {
     current.progress = time;
     ee.emit("progressChange", current.progress);
 };
 
+/**
+ * Toggles pause status for Protube
+ */
 module.exports.togglePause = function() {
     if(status.paused) status.paused = false;
     else status.paused = true;
@@ -62,6 +80,9 @@ module.exports.getPin = function() {
     return pin;
 };
 
+/**
+ * Generates a new pin. To be called when PIN has been used.
+ */
 module.exports.generatePin = function() {
     generatePin();
 };
@@ -198,4 +219,5 @@ function getNextVideo() {
     }
 }
 
+// Interval for incrementing Protube time, and getting new video from queue if previous video has finished.
 var I_incrementTime = setInterval(incrementTimeAndCheckNext, 1000);

@@ -37,7 +37,7 @@ nsp.on("connection", function(socket) {
         if(data.pin == protube.getPin()) { // pin correct
 
             authenticated = true;
-            pin = protube.getPin();
+            pin = protube.getPin(); // Store PIN for this socket.
 
             socket.emit("authenticated", true);
             socket.emit("toast", "Authenticated");
@@ -56,7 +56,7 @@ nsp.on("connection", function(socket) {
             });
             
             socket.on("search", function(data) {
-                http_request.get({
+                http_request.get({ // Get search results from Youtube API
                     url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet&maxResults=50&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
                 }, function(err, res) {
 
@@ -64,13 +64,13 @@ nsp.on("connection", function(socket) {
                     
                     var commaId = '';
                     
-                    for(var i = 0; i<searchResponse.items.length; i++) {
+                    for(var i = 0; i<searchResponse.items.length; i++) { // Create comma-separated list of video ID's
                         commaId += searchResponse.items[i].id.videoId + ',';
                     }
 
-                    commaId = commaId.substr(0, commaId.length-1);
+                    commaId = commaId.substr(0, commaId.length-1); // Remove last ,
 
-                    http_request.get({
+                    http_request.get({ // Get video details from Youtube API, since the search API can't provide durations...
                         url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=contentDetails&maxResults=50&id='+commaId
                     }, function(err, res) {
 
