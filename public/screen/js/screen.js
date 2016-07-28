@@ -133,6 +133,7 @@ function startIdle() {
     $("#queue").hide(0);
     $("#progressBar").hide(0);
     $("#progressBarBackground").hide(0);
+    $("#slideshow").html('<iframe src="https://next.saproto.nl/photos/slideshow" width="100%" height="100%" frameborder="0"></iframe>');
     $("#slideshow").show(0);
 
     radio.src = radioStation.url;
@@ -141,6 +142,7 @@ function startIdle() {
 
 function stopIdle() {
     $("#slideshow").hide(0);
+    $("#slideshow").html("");
     $("#queue").show(0);
     $("#progressBar").show(0);
     $("#progressBarBackground").show(0);
