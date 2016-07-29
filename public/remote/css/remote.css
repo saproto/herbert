@@ -15,7 +15,6 @@ input {
     border: #c3ff00 1px solid;
     font-size: 16px;
     padding: 20px;
-    width: 100%;
 }
 
 button {
@@ -60,7 +59,14 @@ button {
 #searchBox {
     position: absolute;
     top: 120px;
-    width: 100%;
+    left: 0px;
+    right: 0;
+}
+
+#showVideo {
+    position: absolute;
+    top: 120px;
+    right: 0px;
 }
 
 #results {

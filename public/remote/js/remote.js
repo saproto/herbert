@@ -95,7 +95,14 @@ $(document).ready(function() {
             var current = $(this);
             current.click(function(e) {
                 e.preventDefault();
-                remote.emit("add", { id: current.attr("ytId")});
+                console.log({
+                    id: current.attr("ytId"),
+                    showVideo: ($("#showVideo").prop("checked") ? true : false)
+                });
+                remote.emit("add", {
+                    id: current.attr("ytId"),
+                    showVideo: ($("#showVideo").prop("checked") ? true : false)
+                });
             })
         });
     });

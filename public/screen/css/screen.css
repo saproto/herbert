@@ -76,6 +76,21 @@ html, body {
     right: 0;
 }
 
+
+#nowPlaying {
+    position: absolute;
+    z-index: 9999;
+    display: block;
+    right: 20px;
+    top: 20px;
+    padding: 15px 20px;
+    background: rgba(0,0,0,0.8);
+    color: #FFFFFF;
+    text-shadow: 0 1px 1px rgba(255,255,255,0.2);
+    font-size: 26px;
+    border: 1px solid #c1ff00;
+}
+
 #player {
 
 }
@@ -92,6 +107,10 @@ html, body {
     overflow: hidden;
 
     z-index: 100;
+}
+
+.blackBg {
+    background-color: #000;
 }
 
 #pin {

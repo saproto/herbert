@@ -12,6 +12,10 @@ var radioStations = [
     {
         'name' : 'beeRadio',
         'url' : 'http://listen.beeradio.nl/main'
+    },
+    {
+        'name' : 'SkyRadio',
+        'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC'
     }
 ];
 var currentRadioStation = 0;
@@ -33,7 +37,8 @@ generatePin();
 var status = {
     "playing" : false,
     "paused" : false,
-    "playingRadio" : true
+    "playingRadio" : true,
+    "slideshow" : true
 };
 
 module.exports.queue = queue;
@@ -204,7 +209,8 @@ module.exports.addToQueue = function(data, socket) {
                 "id" 		: video_data.id,
                 "title" 	: video_data.snippet.title,
                 "duration" 	: parseISO8601Duration(video_data.contentDetails.duration),
-                "progress"  : 0
+                "progress"  : 0,
+                "showVideo" : data.showVideo
             };
 
             queue.push(video);
@@ -265,11 +271,14 @@ function getRandomInt(min, max) {
  */
 function getNextVideo() {
     if(queue.length > 0) {
+        current = queue.shift();
+
         status.playing = true;
         status.playingRadio = false;
-        ee.emit("protubeStateChange", status);
-        current = queue.shift();
+        status.slideshow = !current.showVideo;
+
         console.log("[protube] Playing "+current.title);
+        ee.emit("protubeStateChange", status);
         ee.emit("videoChange", current);
         ee.emit("queueUpdated", queue);
         ee.emit("progressChange", current.progress);
@@ -278,6 +287,7 @@ function getNextVideo() {
         if(status.playing) {
             status.playing = false;
             status.playingRadio = true;
+            status.slideshow = true;
             ee.emit("radioStation", getRadioStation());
             ee.emit("protubeStateChange", status);
             current = {};

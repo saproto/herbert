@@ -17,6 +17,8 @@ nsp.on("connection", function(socket) {
 
     socket.emit("queue", protube.queue);
     socket.emit("ytInfo", protube.current);
+    socket.emit("progress", protube.getCurrent().progress);
+    socket.emit("playerState", protube.getStatus());
     
     socket.on('setTime', function(data) {
         protube.setTime(data);

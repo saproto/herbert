@@ -37,6 +37,8 @@ var radio = document.createElement("AUDIO");
 
 var radioStation = {};
 
+var nowPlaying = {};
+
 screen.on("radioStation", function(data) {
     radioStation = data;
 });
@@ -56,14 +58,17 @@ function onYouTubePlayerReady() {
     });
 
     screen.on("ytInfo", function(data) {
-        player.cueVideoById(data.id);
+        nowPlaying = data;
+        setNowPlaying(nowPlaying.title);
+        player.cueVideoById(nowPlaying.id);
         player.setPlaybackQuality('highres');
     });
 
     screen.on("queue", function(data) {
         $("#queue ul").html("");
         for(var i in data) {
-            $("#queue ul").append('<li><img src="http://img.youtube.com/vi/' + data[i].id + '/0.jpg" /><h1>' + data[i].title +  '</h1></li>');
+            var invisible = (data[i].showVideo ? '' : '<i class="fa fa-eye-slash" aria-hidden="true"></i>');
+            $("#queue ul").append(`<li><img src="http://img.youtube.com/vi/${data[i].id}/0.jpg" /><h1>${data[i].title}${invisible}</h1></li>`);
         }
     });
 
@@ -76,8 +81,9 @@ function onYouTubePlayerReady() {
     });
 
     screen.on("playerState", function(data) {
+        console.log("playerState", data);
         if(data.playing && !data.paused) {
-            stopIdle();
+            stopIdle(data.slideshow);
             player.playVideo();
 
         } else if(data.playing && data.paused) {
@@ -129,23 +135,53 @@ function stopProgressBar(reset) {
     if(reset) progressBar.css({ width: '0%' });
 }
 
-function startIdle() {
-    $("#queue").hide(0);
-    $("#progressBar").hide(0);
-    $("#progressBarBackground").hide(0);
-    $("#slideshow").html('<iframe src="https://next.saproto.nl/photos/slideshow" width="100%" height="100%" frameborder="0"></iframe>');
-    $("#slideshow").show(0);
+function startSlideshow() {
+    var slideshow = $("#slideshow");
+    if(slideshow.html() == "") slideshow.html('<iframe src="https://next.saproto.nl/photos/slideshow" width="100%" height="100%" frameborder="0"></iframe>');
+    slideshow.show(0);
+}
 
+function stopSlideshow() {
+    var slideshow = $("#slideshow");
+    slideshow.hide(0);
+    slideshow.html("");
+}
+
+function startRadio() {
+    setNowPlaying("Now playing radio: " + radioStation.name);
     radio.src = radioStation.url;
     radio.play();
 }
 
-function stopIdle() {
-    $("#slideshow").hide(0);
-    $("#slideshow").html("");
+function stopRadio() {
+    radio.src = "";
+    console.log("stopping radio");
+}
+
+function startIdle() {
+    $("#queue").hide(0);
+    $("#progressBar").hide(0);
+    $("#progressBarBackground").hide(0);
+    $("#bottomBar").removeClass("blackBg");
+
+    startSlideshow();
+    startRadio();
+}
+
+function stopIdle(slideshow) {
+    if(!slideshow) {
+        stopSlideshow();
+    }else{
+        startSlideshow();
+    }
+    stopRadio();
+
     $("#queue").show(0);
     $("#progressBar").show(0);
     $("#progressBarBackground").show(0);
+    $("#bottomBar").addClass("blackBg");
+}
 
-    radio.src = "";
+function setNowPlaying(title) {
+    $("#nowPlaying").html(title);
 }

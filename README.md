@@ -12,4 +12,5 @@ Herbert requires a .env file with some basic environment configuration.
 YOUTUBE_API_KEY=api key for YouTube
 YOUTUBE_MAX_DURATION=maximum duration of Youtube videos to be added to Protube queue, in seconds.
 REMOTE_TIMEOUT=maximum duration of Protube remote session, in seconds.
+PIN_IP=0.0.0.0
 ```
