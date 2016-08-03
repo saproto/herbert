@@ -16,9 +16,10 @@ nsp.on("connection", function(socket) {
     console.log("[protube_admin] admin connected");
 
     socket.emit("queue", protube.queue);
-    socket.emit("ytInfo", protube.current);
+    socket.emit("ytInfo", protube.getCurrent());
     socket.emit("progress", protube.getCurrent().progress);
     socket.emit("playerState", protube.getStatus());
+    socket.emit("volume", protube.getVolume());
     
     socket.on('setTime', function(data) {
         protube.setTime(data);
@@ -39,8 +40,25 @@ nsp.on("connection", function(socket) {
     socket.on('pause', function() {
         protube.togglePause();
     });
+
+    socket.on("add", function(data) {
+        protube.addToQueue(data, false);
+    });
+
+    socket.on("search", function(data) {
+        protube.searchVideo(data, false, function(returnResponse) {
+            socket.emit("searchResults", returnResponse);
+        });
+    });
     
 });
+
+setInterval(function() {
+    var progress = protube.getCurrent().progress;
+    if(progress) {
+        nsp.emit("progress", progress);
+    }
+}, 1000);
 
 ee.on("progressChange", function(data) {
     nsp.emit("progress", data);
@@ -48,6 +66,10 @@ ee.on("progressChange", function(data) {
 
 ee.on("videoChange", function(data) {
     nsp.emit("ytInfo", protube.getCurrent());
+    nsp.emit("queue", protube.getQueue());
+});
+
+ee.on("queueUpdated", function(data) {
     nsp.emit("queue", protube.getQueue());
 });
 

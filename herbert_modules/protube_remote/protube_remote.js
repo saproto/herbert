@@ -52,49 +52,12 @@ nsp.on("connection", function(socket) {
             }, process.env.REMOTE_TIMEOUT * 1000);
 
             socket.on("add", function(data) {
-                protube.addToQueue(data, socket);
+                protube.addToQueue(data, true);
             });
             
             socket.on("search", function(data) {
-                http_request.get({ // Get search results from Youtube API
-                    url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet&maxResults=50&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
-                }, function(err, res) {
-
-                    var searchResponse = JSON.parse(res.buffer.toString());
-                    
-                    var commaId = '';
-                    
-                    for(var i = 0; i<searchResponse.items.length; i++) { // Create comma-separated list of video ID's
-                        commaId += searchResponse.items[i].id.videoId + ',';
-                    }
-
-                    commaId = commaId.substr(0, commaId.length-1); // Remove last ,
-
-                    http_request.get({ // Get video details from Youtube API, since the search API can't provide durations...
-                        url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=contentDetails&maxResults=50&id='+commaId
-                    }, function(err, res) {
-
-                        var detailsResponse = JSON.parse(res.buffer.toString());
-
-                        var returnResponse = [];
-
-                        for(var i = 0; i<detailsResponse.items.length; i++) {
-
-                            var duration = moment.duration(detailsResponse.items[i].contentDetails.duration);
-
-                            if(duration.asSeconds() < process.env.YOUTUBE_MAX_DURATION) {
-                                returnResponse.push({
-                                    "id" : searchResponse.items[i].id.videoId,
-                                    "title" : searchResponse.items[i].snippet.title,
-                                    "channelTitle" : searchResponse.items[i].snippet.channelTitle,
-                                    "duration" : duration.format("mm:ss")
-                                });
-                            }
-                        }
-
-                        socket.emit("searchResults", returnResponse);
-
-                    });
+                protube.searchVideo(data, true, function(returnResponse) {
+                    socket.emit("searchResults", returnResponse);
                 });
             });
 

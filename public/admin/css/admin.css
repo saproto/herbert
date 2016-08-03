@@ -1,0 +1,86 @@
+body {
+    background: #eee;
+}
+
+#connected {
+    margin-top: 20px;
+}
+
+#progressSlider .slider-selection {
+    background: #BABABA;
+}
+
+#nowPlaying {
+    margin-top: 10px;
+}
+
+#nowPlaying h1 {
+    padding: 0;
+    margin: 10px 0;
+    font-size: 18px;
+}
+
+#nowPlaying img {
+    margin-right: 10px;
+}
+
+#clearSearch:hover {
+    background-color: #ddd;
+    cursor: pointer;
+}
+
+#searchResults {
+    display: none;
+    height: 200px;
+    overflow-y: scroll;
+}
+
+#searchResults .result:hover {
+    cursor: pointer;
+    background-color: #eee;
+}
+
+#searchResults .result img {
+    width: 100px;
+    float: left;
+    margin-right: 10px;
+}
+
+#searchResults .result h1 {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+#searchResults .result h2 {
+    font-size: 12px;
+    margin: 2px 0;
+}
+
+#searchResults .result h3 {
+    font-size: 10px;
+    margin: 0;
+}
+
+#queue {
+}
+
+#queue .item:hover {
+    cursor: pointer;
+    background-color: #eee;
+}
+
+#queue .item img {
+    width: 100px;
+    float: left;
+    margin-right: 10px;
+}
+
+#queue .item h1 {
+    font-size: 16px;
+    margin: 5px 0;
+}
+
+#queue .item h2 {
+    font-size: 12px;
+    margin: 2px 0;
+}
