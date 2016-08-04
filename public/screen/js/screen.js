@@ -101,6 +101,10 @@ function onYouTubePlayerReady() {
         player.setVolume(data.youtube);
         radio.volume = data.radio / 100;
     });
+
+    screen.on("reload", function() {
+        location.reload();
+    });
 }
 
 function onYouTubePlayerStateChange(newState) {

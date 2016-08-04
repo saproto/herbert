@@ -55,6 +55,11 @@ ee.on("volumeChange", function(data) {
     nsp.emit("volume", data);
 });
 
+ee.on("reloadScreens", function() {
+    console.log("[protube_screen] reload command sent to all screens");
+    nsp.emit("reload");
+});
+
 function emitProgress() {
     nsp.emit("progress", protube.getCurrent().progress);
 }

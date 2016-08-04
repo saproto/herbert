@@ -51,6 +51,18 @@ nsp.on("connection", function(socket) {
         });
     });
     
+    socket.on("move", function(data) {
+        protube.moveQueueItem(data.index, data.direction);
+    });
+
+    socket.on("veto", function(data) {
+        protube.removeQueueItem(data);
+    });
+
+    socket.on("reload", function(data) {
+        ee.emit("reloadScreens");
+    });
+    
 });
 
 setInterval(function() {

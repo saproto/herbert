@@ -26,9 +26,6 @@ var queue = [];
 var current = {};
 var pin = 0;
 
-var youtubeVolume = 100;
-var radioVolume = 100;
-
 var volume = {
     "youtube" : 100,
     "radio" : 100
@@ -47,24 +44,43 @@ module.exports.queue = queue;
 module.exports.current = current;
 module.exports.status = status;
 
+/**
+ * Sets Youtube volume
+ * @param youtubeVolume
+ */
 module.exports.setYoutubeVolume = function(youtubeVolume) {
     volume.youtube = youtubeVolume;
+    console.log("[protube] Youtube volume changed to " + youtubeVolume);
     ee.emit("volumeChange", volume);
 };
 
+/**
+ * Sets radio volume
+ * @param radioVolume
+ */
 module.exports.setRadioVolume = function(radioVolume) {
     volume.radio = radioVolume;
+    console.log("[protube] Radio volume changed to " + radioVolume);
     ee.emit("volumeChange", volume);
 };
 
+/**
+ * Returns current volumes.
+ * @returns {{youtube: number, radio: number}}
+ */
 module.exports.getVolume = function() {
     return volume;
 };
 
+/**
+ * Searches for a video on Youtube
+ * @param data
+ * @param timeLimit
+ * @param callback
+ */
 module.exports.searchVideo = function(data, timeLimit, callback) {
     searchVideo(data, timeLimit, callback);
-}
-
+};
 
 /**
  * Returns current radio station.
@@ -89,7 +105,7 @@ module.exports.getRadioStations = function() {
 function getRadioStation() {
     currentRadioStation = getRandomInt(0, radioStations.length-1);
     return radioStations[currentRadioStation];
-};
+}
 
 /**
  * Export for getNextVideo function.
@@ -135,8 +151,7 @@ module.exports.setTime = function(time) {
  * Toggles pause status for Protube
  */
 module.exports.togglePause = function() {
-    if(status.paused) status.paused = false;
-    else status.paused = true;
+    status.paused = !status.paused;
     ee.emit("protubeStateChange", status);
 };
 
@@ -181,6 +196,36 @@ function generatePin() {
 }
 
 /**
+ * Moves queue item up or down
+ * @param index
+ * @param direction
+ */
+module.exports.moveQueueItem = function(index, direction) {
+    console.log("index", index, "direction", direction);
+
+    function moveArrayElement (array, old_index, new_index) {
+        array.splice(new_index, 0, array.splice(old_index, 1)[0]);
+        return array; // for testing purposes
+    }
+
+    switch(direction) {
+        case 'up':
+            queue = moveArrayElement(queue, index, index-1);
+            break;
+        case 'down':
+            queue = moveArrayElement(queue, index, index+1);
+            break;
+    }
+
+    ee.emit("queueUpdated", queue);
+};
+
+module.exports.removeQueueItem = function(index) {
+    queue.splice(index, 1);
+    ee.emit("queueUpdated", queue);
+};
+
+/**
  * Adds video to Protube queue.
  *
  * @param data
@@ -218,6 +263,8 @@ module.exports.addToQueue = function(data, timeLimit) {
             };
 
             if(!timeLimit || video.duration < process.env.YOUTUBE_MAX_DURATION) queue.push(video);
+
+            console.log("[protube] Added " + video.title + " to Protube queue");
 
             ee.emit("queueUpdated", queue);
 
@@ -305,6 +352,7 @@ function getNextVideo() {
  * @param timeLimit:boolean
  */
 function searchVideo(data, timeLimit, callback) {
+    console.log("[protube] Performing search for " + data);
     http_request.get({ // Get search results from Youtube API
         url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet&maxResults=50&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
     }, function(err, res) {

@@ -34,16 +34,47 @@ $(document).ready(function() {
         queue.html("");
 
         for(var i in data) {
-            queue.append('<div class="item" ytId="' + data[i].id + '">' +
+            var controls = "";
+            if(i > 0) controls += '<span class="up" data-index="' + i + '"><i class="fa fa-arrow-circle-up" aria-hidden="true"></i></span>';
+            if(i < data.length-1) controls += '<span class="down" data-index="' + i + '"><i class="fa fa-arrow-circle-down" aria-hidden="true"></i></span>';
+            controls += '<span class="veto" data-index="' + i + '"><i class="fa fa-minus-circle" aria-hidden="true"></i></span>';
+
+            queue.append('<div class="item" data-ytId="' + data[i].id + '">' +
             '<img src="http://img.youtube.com/vi/' + data[i].id + '/0.jpg" />' +
             '<div>' +
             '<h1>' + data[i].title + '</h1>' +
             '<h2>' + prettifyDuration(data[i].duration ) + '</h2>' +
+            '<h3>' + controls + '</h3>' +
             '</div>' +
             '<div style="clear: both;"></div>' +
             '</div>');
         }
+
+        $(".up").click(function(e) {
+            e.preventDefault();
+            moveQueueItem($(this).attr("data-index"), 'up');
+        });
+
+        $(".down").click(function(e) {
+            e.preventDefault();
+            moveQueueItem($(this).attr("data-index"), 'down');
+        });
+
+        $(".veto").click(function(e) {
+            e.preventDefault();
+            admin.emit("veto", $(this).attr("data-index"));
+        });
     });
+
+    function moveQueueItem(index, direction) {
+
+        var data = {
+            'index' : index,
+            'direction' : direction
+        };
+
+        admin.emit("move", data);
+    }
 
     admin.on("ytInfo", function(data) {
         if(!$.isEmptyObject(data)) {
@@ -90,7 +121,7 @@ $(document).ready(function() {
                     id: current.attr("ytId"),
                     showVideo: ($("#showVideo").prop("checked") ? true : false)
                 });
-            })
+            });
         });
 
         results.show(100);
@@ -100,23 +131,27 @@ $(document).ready(function() {
         e.preventDefault();
         $("#searchResults").hide(0);
         $("#searchBox").val("");
-    })
+    });
 
     $("#playpause").click(function(e) {
         e.preventDefault();
         admin.emit("pause");
     });
 
-    $('#searchForm').bind('submit', function(e){
+    $("#skip").click(function(e) {
         e.preventDefault();
-        admin.emit("search", $("#searchBox").val());
-        $("#results").html("Loading...");
+        admin.emit("skip");
     });
+
+    $("#reload").click(function(e) {
+        e.preventDefault();
+        admin.emit("reload");
+    })
     
     admin.on("volume", function(data) {
         $("#youtubeV").slider('setValue', data.youtube);
         $("#radioV").slider('setValue', data.radio);
-    })
+    });
 });
 
 function generateResult(item) {
