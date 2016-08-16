@@ -25,7 +25,7 @@ nsp.on("connection", function(socket) {
                 console.error(err);
                 return;
             }
-            
+
             var user_info = JSON.parse(res.buffer.toString());
 
             if(user_info.is_admin) {
@@ -83,6 +83,10 @@ nsp.on("connection", function(socket) {
 
                 socket.on("soundboard", function(data) {
                     ee.emit("soundboard", data);
+                });
+
+                socket.on("protubeToggle", function() {
+                    ee.emit("protubeToggle");
                 });
             }
         });
