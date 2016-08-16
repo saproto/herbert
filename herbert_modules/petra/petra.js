@@ -45,5 +45,5 @@ ee.on("soundboard", function(data) {
 
 ee.on("protubeToggle", function() {
     protubeOn = !protubeOn;
-    socket.emit("loadPages", windowDefinitions());
+    nsp.emit("loadPages", windowDefinitions());
 });
