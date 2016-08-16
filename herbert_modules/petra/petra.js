@@ -30,6 +30,8 @@ var windowDefinitions = [{
 nsp.on("connection", function(socket) {
     console.log("[petra] petra connected");
 
+    socket.emit("loadPages", windowDefinitions);
+
     socket.on("get-window-definitions", function(data) {
         socket.emit("loadPages", windowDefinitions);
     });
