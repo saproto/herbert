@@ -27,8 +27,8 @@ var current = {};
 var pin = 0;
 
 var volume = {
-    "youtube" : 100,
-    "radio" : 100
+    "youtube" : 10,
+    "radio" : 10
 };
 
 generatePin();
