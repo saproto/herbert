@@ -12,6 +12,7 @@ var io = require('../../io').socketio;
 var nsp = io.of('/protube-pin');
 
 nsp.on("connection", function(socket) {
+    if(socket.request.connection.remoteAddress != process.env.PIN_IP) socket.disconnect();
     socket.emit("pin", protube.getPin());
 });
 
