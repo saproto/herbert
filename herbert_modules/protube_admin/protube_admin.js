@@ -20,6 +20,12 @@ nsp.on("connection", function(socket) {
         http_request.get({
             url: process.env.AUTH_ENDPOINT + token
         }, function(err, res) {
+
+            if(err) {
+                console.error(err);
+                return;
+            }
+            
             var user_info = JSON.parse(res.buffer.toString());
 
             if(user_info.is_admin) {
