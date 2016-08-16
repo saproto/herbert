@@ -88,11 +88,11 @@ function onYouTubePlayerReady() {
 
         } else if(data.playing && data.paused) {
             player.pauseVideo();
-            stopProgressBar(true);
+            stopProgressBar(false);
 
         } else {
             player.stopVideo();
-            stopProgressBar(false);
+            stopProgressBar(true);
             startIdle();
         }
     });
