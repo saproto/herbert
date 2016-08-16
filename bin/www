@@ -8,7 +8,8 @@ var dotenv = require('dotenv').config();
 var ee = ('../events');
 var app = require('../app');
 var debug = require('debug')('herbert:server');
-var http = require('http');
+var https = require('https');
+var fs = require('fs');
 
 /**
  * Get port from environment and store in Express.
@@ -20,8 +21,13 @@ app.set('port', port);
 /**
  * Create HTTP server.
  */
+var options = {
+        key: fs.readFileSync('./cert/server.key').toString(),
+        cert: fs.readFileSync('./cert/server.cer').toString(),
+        ca: fs.readFileSync('./cert/server.ca').toString()
+}
 
-var server = http.createServer(app);
+var server = https.createServer(options, app);
 
 /**
  * Listen on provided port, on all network interfaces.

@@ -74,6 +74,10 @@ nsp.on("connection", function(socket) {
                 socket.on("reload", function(data) {
                     ee.emit("reloadScreens");
                 });
+
+                socket.on("soundboard", function(data) {
+                    ee.emit("soundboard", data);
+                });
             }
         });
     });

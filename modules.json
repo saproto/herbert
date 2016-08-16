@@ -5,6 +5,11 @@
   },
 
   {
+    "name" : "petra",
+    "active" : true
+  },
+
+  {
     "name" : "protube_screen",
     "active" : true
   },
