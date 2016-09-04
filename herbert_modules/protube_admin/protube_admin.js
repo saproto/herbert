@@ -18,7 +18,7 @@ nsp.on("connection", function (socket) {
 
     socket.on('authenticate', function (token) {
         
-        function kickHandler(isAdmin) {
+        function kickHandler() {
             adminCheck(token, function(isAdmin) {
                 if(!isAdmin) {
                     console.log("[protube_admin] kicking admin with token", token);
