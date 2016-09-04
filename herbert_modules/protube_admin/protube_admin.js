@@ -12,23 +12,30 @@ var ee = require('../../events');
 var io = require('../../io').socketio;
 var nsp = io.of('/protube-admin');
 
-nsp.on("connection", function(socket) {
+nsp.on("connection", function (socket) {
 
     console.log("[protube_admin] admin connected");
 
-    socket.on('authenticate', function(token) {
-        http_request.get({
-            url: process.env.AUTH_ENDPOINT + token
-        }, function(err, res) {
+    socket.on('authenticate', function (token) {
+        
+        function kickHandler(isAdmin) {
+            adminCheck(token, function(isAdmin) {
+                if(!isAdmin) {
+                    console.log("[protube_admin] kicking admin with token", token);
+                    socket.disconnect();
+                }
+            });
+        }
 
-            if(err) {
-                console.error(err);
-                return;
-            }
+        ee.on("adminCheck", kickHandler);
 
-            var user_info = JSON.parse(res.buffer.toString());
+        socket.on("disconnect", function() {
+            ee.removeListener("adminCheck", kickHandler);
+        });
 
-            if(user_info.is_admin) {
+        adminCheck(token, function (isAdmin) {
+
+            if(isAdmin) {
                 console.log("[protube_admin] admin authenticated");
 
                 socket.emit("authenticated");
@@ -39,85 +46,109 @@ nsp.on("connection", function(socket) {
                 socket.emit("playerState", protube.getStatus());
                 socket.emit("volume", protube.getVolume());
 
-                socket.on('setTime', function(data) {
+                socket.on('setTime', function (data) {
                     protube.setTime(data);
                 });
 
-                socket.on("setRadioVolume", function(data) {
+                socket.on("setRadioVolume", function (data) {
                     protube.setRadioVolume(data);
                 });
 
-                socket.on("setYoutubeVolume", function(data) {
+                socket.on("setYoutubeVolume", function (data) {
                     protube.setYoutubeVolume(data);
                 });
 
-                socket.on('skip', function() {
+                socket.on('skip', function () {
                     protube.getNextVideo();
                 });
 
-                socket.on('pause', function() {
+                socket.on('pause', function () {
                     protube.togglePause();
                 });
 
-                socket.on("add", function(data) {
+                socket.on("add", function (data) {
                     protube.addToQueue(data, false);
                 });
 
-                socket.on("search", function(data) {
-                    protube.searchVideo(data, false, function(returnResponse) {
+                socket.on("search", function (data) {
+                    protube.searchVideo(data, false, function (returnResponse) {
                         socket.emit("searchResults", returnResponse);
                     });
                 });
 
-                socket.on("move", function(data) {
+                socket.on("move", function (data) {
                     protube.moveQueueItem(data.index, data.direction);
                 });
 
-                socket.on("veto", function(data) {
+                socket.on("veto", function (data) {
                     protube.removeQueueItem(data);
                 });
 
-                socket.on("reload", function(data) {
+                socket.on("reload", function (data) {
                     ee.emit("reloadScreens");
                 });
 
-                socket.on("soundboard", function(data) {
+                socket.on("soundboard", function (data) {
                     ee.emit("soundboard", data);
                 });
 
-                socket.on("protubeToggle", function() {
+                socket.on("protubeToggle", function () {
                     ee.emit("protubeToggle");
                 });
             }
+
         });
+
     });
-    
+
 });
 
-setInterval(function() {
+var adminCheck = function (token, callback) {
+    console.log("[protube_admin] authentication requested for", token);
+
+    http_request.get({
+        url: process.env.AUTH_ENDPOINT + token
+    }, function (err, res) {
+
+        if (err) {
+            console.error(err);
+            return;
+        }
+
+        var user_info = JSON.parse(res.buffer.toString());
+
+        if (user_info.is_admin) {
+            callback(true);
+        }else{
+            callback(false);
+        }
+    });
+};
+
+setInterval(function () {
     var progress = protube.getCurrent().progress;
-    if(progress) {
+    if (progress) {
         nsp.emit("progress", progress);
     }
 }, 1000);
 
-ee.on("progressChange", function(data) {
+ee.on("progressChange", function (data) {
     nsp.emit("progress", data);
 });
 
-ee.on("videoChange", function(data) {
+ee.on("videoChange", function (data) {
     nsp.emit("ytInfo", protube.getCurrent());
     nsp.emit("queue", protube.getQueue());
 });
 
-ee.on("queueUpdated", function(data) {
+ee.on("queueUpdated", function (data) {
     nsp.emit("queue", protube.getQueue());
 });
 
-ee.on("protubeStateChange", function(data) {
+ee.on("protubeStateChange", function (data) {
     nsp.emit("playerState", data);
 });
 
-ee.on("volumeChange", function(data) {
+ee.on("volumeChange", function (data) {
     nsp.emit("volume", data);
 });
