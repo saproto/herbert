@@ -15,7 +15,7 @@ var windowDefinitions = function() {
     return [{
             "name": "protube",
             "displayNumber": 1,
-            "url": (protubeOn ? "https://www.saproto.nl/protube/screen" : "https://www.saproto.nl/images/application/protube_offline.png")
+            "url": (protubeOn ? "https://www.saproto.nl/protube/screen" : "https://www.saproto.nl/protube/offline")
         },
         {
             "name": "smartxp",
