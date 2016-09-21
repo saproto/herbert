@@ -20,7 +20,7 @@ var radioStations = [
         'url' : 'http://xmedia.ex.ac.uk:8000/high-quality'
     }
 ];
-var currentRadioStation = 0;
+var currentRadioStation = getRandomInt(0, radioStations.length-1);
 
 var queue = [];
 var current = {};
