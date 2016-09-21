@@ -14,17 +14,17 @@ var protubeOn = true;
 var windowDefinitions = function() {
     return [{
             "name": "protube",
-            "displayNumber": 1,
+            "displayNumber": 3,
             "url": (protubeOn ? "https://www.saproto.nl/protube/screen" : "https://www.saproto.nl/protube/offline")
         },
         {
             "name": "smartxp",
-            "displayNumber": 3,
+            "displayNumber": 0,
             "url": "https://www.saproto.nl/smartxp"
         },
         {
             "name": "narrowcasting",
-            "displayNumber": 0,
+            "displayNumber": 1,
             "url": "https://www.saproto.nl/narrowcasting"
         }];
 };
