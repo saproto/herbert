@@ -19,12 +19,12 @@ var windowDefinitions = function() {
         },
         {
             "name": "smartxp",
-            "displayNumber": 0,
+            "displayNumber": 1,
             "url": "https://www.saproto.nl/smartxp"
         },
         {
             "name": "narrowcasting",
-            "displayNumber": 1,
+            "displayNumber": 0,
             "url": "https://www.saproto.nl/narrowcasting"
         }];
 };
