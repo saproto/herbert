@@ -14,10 +14,6 @@ var radioStations = [
     {
         'name' : 'SkyRadio',
         'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC'
-    },
-    {
-        'name' : 'Expression FM',
-        'url' : 'http://xmedia.ex.ac.uk:8000/high-quality'
     }
 ];
 var currentRadioStation = getRandomInt(0, radioStations.length-1);
