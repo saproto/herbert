@@ -12,10 +12,6 @@ var ee = require('../../events');
 
 var radioStations = [
     {
-        'name' : 'beeRadio',
-        'url' : 'http://listen.beeradio.nl/main'
-    },
-    {
         'name' : 'SkyRadio',
         'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC'
     }
