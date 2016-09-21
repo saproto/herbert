@@ -12,15 +12,15 @@ var ee = require('../../events');
 
 var radioStations = [
     {
-        'name' : 'beeRadio',
-        'url' : 'http://listen.beeradio.nl/main'
-    },
-    {
         'name' : 'SkyRadio',
         'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC'
+    },
+    {
+        'name' : 'Expression FM',
+        'url' : 'http://xmedia.ex.ac.uk:8000/high-quality'
     }
 ];
-var currentRadioStation = 0;
+var currentRadioStation = getRandomInt(0, radioStations.length-1);
 
 var queue = [];
 var current = {};
@@ -259,7 +259,8 @@ module.exports.addToQueue = function(data, timeLimit) {
                 "title" 	: video_data.snippet.title,
                 "duration" 	: parseISO8601Duration(video_data.contentDetails.duration),
                 "progress"  : 0,
-                "showVideo" : data.showVideo
+                "showVideo" : data.showVideo,
+                "token"     : (data.token != null) ? data.token : null
             };
 
             if(!timeLimit || video.duration < process.env.YOUTUBE_MAX_DURATION) queue.push(video);
@@ -331,6 +332,14 @@ function getNextVideo() {
         ee.emit("videoChange", current);
         ee.emit("queueUpdated", queue);
         ee.emit("progressChange", current.progress);
+        
+        http_request.get({
+            url: encodeURI(process.env.PLAYEDVIDEO_ENDPOINT + '?secret=' + process.env.SECRET + '&token=' + current.token + '&video_id=' + current.id + '&video_title=' + current.title)
+        }, function(err, res) {
+            if (err) {
+                console.log("[protube] Submitting played video resulted in error. " + err);
+            }
+        });
         
     }else{
         if(status.playing) {

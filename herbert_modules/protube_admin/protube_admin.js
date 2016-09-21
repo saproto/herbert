@@ -67,6 +67,7 @@ nsp.on("connection", function (socket) {
                 });
 
                 socket.on("add", function (data) {
+                    data.token = token;
                     protube.addToQueue(data, false);
                 });
 

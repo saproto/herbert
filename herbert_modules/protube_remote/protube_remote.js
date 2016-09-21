@@ -26,11 +26,17 @@ nsp.on("connection", function(socket) {
 
     var authenticated = false;
     var pin;
+    var token = null;
 
     socket.emit("queue", protube.getQueue());
     socket.emit("ytInfo", protube.getCurrent());
 
     console.log("[protube_remote] remote connected");
+
+    socket.on("token", function(_token) {
+        token = _token;
+        console.log("[protube_remote] remote sent token", token);
+    });
 
     socket.on("authenticate", function(data) {
 
@@ -52,6 +58,7 @@ nsp.on("connection", function(socket) {
             }, process.env.REMOTE_TIMEOUT * 1000);
 
             socket.on("add", function(data) {
+                data.token = token;
                 protube.addToQueue(data, true);
             });
             
