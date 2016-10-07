@@ -45,6 +45,7 @@ nsp.on("connection", function (socket) {
                 socket.emit("progress", protube.getCurrent().progress);
                 socket.emit("playerState", protube.getStatus());
                 socket.emit("volume", protube.getVolume());
+                socket.emit("pin", protube.getPin());
 
                 socket.on('setTime', function (data) {
                     protube.setTime(data);
@@ -152,4 +153,8 @@ ee.on("protubeStateChange", function (data) {
 
 ee.on("volumeChange", function (data) {
     nsp.emit("volume", data);
+});
+
+ee.on('pinChange', function(data) {
+    nsp.emit("pin", data);
 });
