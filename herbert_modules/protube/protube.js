@@ -298,7 +298,7 @@ module.exports.addToQueue = function(data, timeLimit) {
 function incrementTimeAndCheckNext() {
     if(status.playing) {
         if(!status.paused) current.progress++;
-        if(current.progress > current.duration) getNextVideo();
+        if(current.progress >= current.duration) getNextVideo();
     }else{
         getNextVideo();
     }
