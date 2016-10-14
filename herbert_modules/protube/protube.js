@@ -204,7 +204,7 @@ function pad(number, length) {
  * Generates new pin
  */
 function generatePin() {
-    pin = pad(Math.round( Math.random() * 1000 ), 3);
+    pin = pad(Math.round( Math.random() * 999 ), 3);
     ee.emit("pinChange", pin);
 }
 
@@ -245,7 +245,6 @@ module.exports.removeQueueItem = function(index) {
  * @param socket
  */
 module.exports.addToQueue = function(data, timeLimit) {
-    // TODO: add fairness based on pins or something.
     http_request.get({
         url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet,contentDetails&id=' + data.id
     }, function(err, res) {
@@ -273,12 +272,41 @@ module.exports.addToQueue = function(data, timeLimit) {
                 "duration" 	: parseISO8601Duration(video_data.contentDetails.duration),
                 "progress"  : 0,
                 "showVideo" : data.showVideo,
-                "token"     : (data.token != null) ? data.token : null
+                "token"     : (data.token) ? data.token : null,
+                "pin"       : (data.pin) ? data.pin : null
             };
 
-            if(!timeLimit || video.duration < process.env.YOUTUBE_MAX_DURATION) queue.push(video);
+            if(timeLimit) {
+                if(video.duration < process.env.YOUTUBE_MAX_DURATION) {
 
-            console.log("[protube] Added " + video.title + " to Protube queue");
+                    // Put the video on a fair place within the queue bases on previous pins.
+                    var previousPincode = "";
+                    var previousToken = "";
+                    var foundDouble = false;
+
+                    for( var i in queue ) {
+                        if((queue[i].pin != null && queue[i].pin == previousPincode && queue[i].pin != video.pin) || (queue[i].token != null && queue[i].token == previousToken && queue[i].token != video.token)) {
+                            // Two videos from the same user found, add the video
+                            console.log("[protube] Added " + video.title + " to Protube queue");
+                            queue.splice(i, 0, video);
+                            foundDouble = true;
+                            break;
+                        } else {
+                            previousPincode = queue[i].pin;
+                            previousToken = queue[i].token;
+                        }
+                    }
+
+                    if(!foundDouble) {
+                        // Add to the end
+                        console.log("[protube] Added " + video.title + " to Protube queue");
+                        queue.push(video);
+                    }
+                }
+            }else{
+                console.log("[protube] Added " + video.title + " to Protube queue");
+                queue.push(video);
+            }
 
             ee.emit("queueUpdated", getQueue());
 
