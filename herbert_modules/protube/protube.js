@@ -118,12 +118,29 @@ module.exports.getCurrent = function() {
     return current;
 };
 
+function getQueue() {
+    var returnQueue = [];
+
+    for(var i = 0; i<queue.length; i++) {
+        var temp = {
+            'duration' : queue[i].duration,
+            'id' : queue[i].id,
+            'progress' : queue[i].progress,
+            'showVideo' : queue[i].showVideo,
+            'title' : queue[i].title
+        };
+        returnQueue.push(temp);
+    }
+
+    return returnQueue;
+}
+
 /**
  * Returns Protube queue
  * @returns {Array}
  */
 module.exports.getQueue = function() {
-    return queue;
+    return getQueue();
 };
 
 /**
@@ -213,12 +230,12 @@ module.exports.moveQueueItem = function(index, direction) {
             break;
     }
 
-    ee.emit("queueUpdated", queue);
+    ee.emit("queueUpdated", getQueue());
 };
 
 module.exports.removeQueueItem = function(index) {
     queue.splice(index, 1);
-    ee.emit("queueUpdated", queue);
+    ee.emit("queueUpdated", getQueue());
 };
 
 /**
@@ -263,7 +280,7 @@ module.exports.addToQueue = function(data, timeLimit) {
 
             console.log("[protube] Added " + video.title + " to Protube queue");
 
-            ee.emit("queueUpdated", queue);
+            ee.emit("queueUpdated", getQueue());
 
         }
     });
@@ -326,7 +343,7 @@ function getNextVideo() {
         console.log("[protube] Playing "+current.title);
         ee.emit("protubeStateChange", status);
         ee.emit("videoChange", current);
-        ee.emit("queueUpdated", queue);
+        ee.emit("queueUpdated", getQueue());
         ee.emit("progressChange", current.progress);
         
         http_request.get({
@@ -346,7 +363,7 @@ function getNextVideo() {
             ee.emit("protubeStateChange", status);
             current = {};
             ee.emit("videoChange", current);
-            ee.emit("queueUpdated", queue);
+            ee.emit("queueUpdated", getQueue());
         }
     }
 }

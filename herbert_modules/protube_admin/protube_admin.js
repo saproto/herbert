@@ -40,7 +40,7 @@ nsp.on("connection", function (socket) {
 
                 socket.emit("authenticated");
 
-                socket.emit("queue", protube.queue);
+                socket.emit("queue", protube.getQueue());
                 socket.emit("ytInfo", protube.getCurrent());
                 socket.emit("progress", protube.getCurrent().progress);
                 socket.emit("playerState", protube.getStatus());
