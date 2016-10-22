@@ -40,6 +40,7 @@ nsp.on("connection", function(socket) {
 });
 
 ee.on("soundboard", function(data) {
+    console.log("[petra] requesting soundboard sound", data);
     nsp.emit("soundboard", data);
 });
 

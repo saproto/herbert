@@ -12,4 +12,13 @@ router.get('/adminCheck', function(req, res, next) {
   res.send("OK");
 });
 
+router.get('/soundboard', function(req, res, next) {
+  if(req.query.secret == process.env.SECRET) {
+    ee.emit("soundboard", req.query.sound);
+    res.send("OK");
+  }else{
+    res.status(403).send("NO. :(");
+  }
+});
+
 module.exports = router;
