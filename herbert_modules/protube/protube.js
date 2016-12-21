@@ -12,8 +12,11 @@ var ee = require('../../events');
 
 var radioStations = [
     {
-        'name' : 'SkyRadio',
-        'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC'
+        /*'name' : 'SkyRadio',
+        'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC',*/
+        'name' : '3FM',
+        'url' : 'http://icecast.omroep.nl/3fm-bb-mp3'
+
     }
 ];
 var currentRadioStation = getRandomInt(0, radioStations.length-1);
