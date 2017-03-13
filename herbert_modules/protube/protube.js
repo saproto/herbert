@@ -448,5 +448,9 @@ function searchVideo(data, timeLimit, callback) {
     });
 }
 
+ee.on("skip", function() {
+   getNextVideo();
+});
+
 // Interval for incrementing Protube time, and getting new video from queue if previous video has finished.
 var I_incrementTime = setInterval(incrementTimeAndCheckNext, 1000);

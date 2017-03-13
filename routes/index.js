@@ -21,4 +21,13 @@ router.get('/soundboard', function(req, res, next) {
   }
 });
 
+router.get('/skip', function(req, res, next) {
+    if(req.query.secret == process.env.SECRET) {
+        ee.emit("skip");
+        res.send("OK");
+    }else{
+        res.status(403).send("NO. :(");
+    }
+});
+
 module.exports = router;
