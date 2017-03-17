@@ -12,11 +12,20 @@ var ee = require('../../events');
 
 var radioStations = [
     {
-        /*'name' : 'SkyRadio',
-        'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC',*/
         'name' : 'Qmusic',
         'url' : 'http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3'
-
+    },
+    {
+        'name' : 'Studio Brussel',
+        'url' : 'http://mp3.streampower.be/stubru-high.mp3'
+    },
+    {
+        'name' : 'BBC Radio 1',
+        'url' : 'http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_q'
+    },
+    {
+        'name' : 'SkyRadio',
+         'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC'
     }
 ];
 var currentRadioStation = getRandomInt(0, radioStations.length-1);
