@@ -14,8 +14,8 @@ var radioStations = [
     {
         /*'name' : 'SkyRadio',
         'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC',*/
-        'name' : '3FM',
-        'url' : 'http://icecast.omroep.nl/3fm-bb-mp3'
+        'name' : 'Qmusic',
+        'url' : 'http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3'
 
     }
 ];
