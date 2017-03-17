@@ -86,6 +86,10 @@ nsp.on("connection", function (socket) {
                     protube.removeQueueItem(data);
                 });
 
+                socket.on("shuffleRadio", function(data) {
+                    protube.shuffleRadio();
+                });
+
                 socket.on("reload", function (data) {
                     ee.emit("reloadScreens");
                 });

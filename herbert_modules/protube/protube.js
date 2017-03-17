@@ -130,6 +130,10 @@ module.exports.getCurrent = function() {
     return current;
 };
 
+module.exports.shuffleRadio = function() {
+    ee.emit("radioStation", getRadioStation());
+};
+
 function getQueue() {
     var returnQueue = [];
 
