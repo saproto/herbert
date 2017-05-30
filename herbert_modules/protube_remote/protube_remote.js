@@ -33,6 +33,8 @@ nsp.on("connection", function (socket) {
 
     console.log("[protube_remote] remote connected");
 
+    protube.updateClient(socket, 'remote', null);
+
     socket.on("token", function (_token) {
         token = _token;
 
@@ -68,8 +70,6 @@ nsp.on("connection", function (socket) {
 
             socket.emit("authenticated", true);
             socket.emit("toast", "Authenticated");
-
-            protube.updateClient(socket, 'remote', null);
 
             console.log("[protube_remote] remote authenticated");
 
