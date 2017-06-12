@@ -70,6 +70,10 @@ nsp.on("connection", function (socket) {
                     protube.togglePause();
                 });
 
+                socket.on('togglePhotos', function () {
+                    protube.togglePhotos();
+                });
+
                 socket.on("add", function (data) {
                     data.token = token;
                     protube.addToQueue(data, false);

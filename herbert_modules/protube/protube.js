@@ -186,6 +186,16 @@ module.exports.togglePause = function () {
 };
 
 /**
+ * Toggles pause status for Protube
+ */
+module.exports.togglePhotos = function () {
+    console.log(current);
+    current.showVideo = !current.showVideo;
+    status.slideshow = !current.showVideo;
+    ee.emit("protubeStateChange", status);
+};
+
+/**
  * Returns current pin
  * @returns {number}
  */
