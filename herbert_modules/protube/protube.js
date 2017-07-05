@@ -433,7 +433,7 @@ function getNextVideo() {
         ee.emit("progressChange", current.progress);
 
         http_request.get({
-            url: encodeURI(process.env.PLAYEDVIDEO_ENDPOINT + '?secret=' + process.env.SECRET + '&token=' + current.token + '&video_id=' + current.id + '&video_title=' + current.title)
+            url: encodeURI(process.env.PLAYEDVIDEO_ENDPOINT + '?secret=' + process.env.SECRET + '&token=' + current.token + '&video_id=' + current.id + '&video_title=' + encodeURIComponent(current.title))
         }, function (err, res) {
             if (err) {
                 console.log("[protube] Submitting played video resulted in error. " + err);
