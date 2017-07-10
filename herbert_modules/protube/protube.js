@@ -45,7 +45,8 @@ var status = {
     "playing" : false,
     "paused" : false,
     "playingRadio" : true,
-    "slideshow" : true
+    "slideshow" : true,
+    "protubeOn" : true
 };
 
 module.exports.queue = queue;
@@ -463,6 +464,13 @@ function searchVideo(data, timeLimit, callback) {
 
 ee.on("skip", function() {
    getNextVideo();
+});
+
+ee.on("protubeToggle", function() {
+    console.log("[protube] toggle requested");
+    status.protubeOn = !status.protubeOn;
+    ee.emit("protubeStateChange", status);
+    ee.emit("petraReload");
 });
 
 // Interval for incrementing Protube time, and getting new video from queue if previous video has finished.

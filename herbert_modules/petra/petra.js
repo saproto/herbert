@@ -9,13 +9,13 @@ var ee = require('../../events');
 var io = require('../../io').socketio;
 var nsp = io.of('/petra');
 
-var protubeOn = true;
+var protube = require('../../moduleLoader').loaded.protube;
 
 var windowDefinitions = function() {
     return [{
             "name": "protube",
             "displayNumber": 0,
-            "url": (protubeOn ? "https://www.saproto.nl/protube/screen" : "https://www.saproto.nl/protube/offline")
+            "url": (protube.status.protubeOn ? "https://www.saproto.nl/protube/screen" : "https://www.saproto.nl/protube/offline")
         },
         {
             "name": "smartxp",
@@ -44,7 +44,7 @@ ee.on("soundboard", function(data) {
     nsp.emit("soundboard", data);
 });
 
-ee.on("protubeToggle", function() {
-    protubeOn = !protubeOn;
+ee.on("petraReload", function() {
+    console.log("[petra] requesting reload");
     nsp.emit("loadPages", windowDefinitions());
 });
