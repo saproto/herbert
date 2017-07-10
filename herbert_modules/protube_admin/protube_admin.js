@@ -17,10 +17,10 @@ nsp.on("connection", function (socket) {
     console.log("[protube_admin] admin connected");
 
     socket.on('authenticate', function (token) {
-        
+
         function kickHandler() {
-            adminCheck(token, function(isAdmin) {
-                if(!isAdmin) {
+            adminCheck(socket, token, function (isAdmin) {
+                if (!isAdmin) {
                     console.log("[protube_admin] kicking admin with token", token);
                     socket.disconnect();
                 }
@@ -29,13 +29,15 @@ nsp.on("connection", function (socket) {
 
         ee.on("adminCheck", kickHandler);
 
-        socket.on("disconnect", function() {
+        socket.on("disconnect", function () {
+            protube.removeClient(socket);
             ee.removeListener("adminCheck", kickHandler);
+            console.log("[protube_screen] admin disconnected");
         });
 
-        adminCheck(token, function (isAdmin) {
+        adminCheck(socket, token, function (isAdmin) {
 
-            if(isAdmin) {
+            if (isAdmin) {
                 console.log("[protube_admin] admin authenticated");
 
                 socket.emit("authenticated");
@@ -46,6 +48,7 @@ nsp.on("connection", function (socket) {
                 socket.emit("playerState", protube.getStatus());
                 socket.emit("volume", protube.getVolume());
                 socket.emit("pin", protube.getPin());
+                ee.emit('clientChange');
 
                 socket.on('setTime', function (data) {
                     protube.setTime(data);
@@ -67,6 +70,10 @@ nsp.on("connection", function (socket) {
                     protube.togglePause();
                 });
 
+                socket.on('togglePhotos', function () {
+                    protube.togglePhotos();
+                });
+
                 socket.on("add", function (data) {
                     data.token = token;
                     protube.addToQueue(data, false);
@@ -86,7 +93,7 @@ nsp.on("connection", function (socket) {
                     protube.removeQueueItem(data);
                 });
 
-                socket.on("shuffleRadio", function(data) {
+                socket.on("shuffleRadio", function (data) {
                     protube.shuffleRadio();
                 });
 
@@ -102,7 +109,7 @@ nsp.on("connection", function (socket) {
                     ee.emit("protubeToggle");
                 });
 
-                socket.on("lampOn", function(data) {
+                socket.on("lampOn", function (data) {
                     http_request.get({
                         url: process.env.HELIOS_ENDPOINT + 'lampOn?secret=' + process.env.HELIOS_SECRET + '&lamp=' + data
                     }, function (err, res) {
@@ -110,13 +117,15 @@ nsp.on("connection", function (socket) {
                     });
                 });
 
-                socket.on("lampOff", function(data) {
+                socket.on("lampOff", function (data) {
                     http_request.get({
                         url: process.env.HELIOS_ENDPOINT + 'lampOff?secret=' + process.env.HELIOS_SECRET + '&lamp=' + data
                     }, function (err, res) {
                         //
                     });
                 });
+            } else {
+                socket.emit("no_admin");
             }
 
         });
@@ -125,7 +134,7 @@ nsp.on("connection", function (socket) {
 
 });
 
-var adminCheck = function (token, callback) {
+var adminCheck = function (socket, token, callback) {
     console.log("[protube_admin] authentication requested for", token);
 
     http_request.get({
@@ -139,9 +148,11 @@ var adminCheck = function (token, callback) {
 
         var user_info = JSON.parse(res.buffer.toString());
 
+        protube.updateClient(socket, 'admin', user_info);
+
         if (user_info.is_admin) {
             callback(true);
-        }else{
+        } else {
             callback(false);
         }
     });
@@ -175,6 +186,10 @@ ee.on("volumeChange", function (data) {
     nsp.emit("volume", data);
 });
 
-ee.on('pinChange', function(data) {
+ee.on('pinChange', function (data) {
     nsp.emit("pin", data);
 });
+
+ee.on('clientChange', function () {
+    nsp.emit('clients', protube.getClients());
+})

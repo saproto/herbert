@@ -12,31 +12,32 @@ var ee = require('../../events');
 
 var radioStations = [
     {
-        'name' : 'Qmusic',
-        'url' : 'http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3'
+        'name': 'Qmusic',
+        'url': 'http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3'
     },
     {
-        'name' : 'Studio Brussel',
-        'url' : 'http://mp3.streampower.be/stubru-high.mp3'
+        'name': 'Studio Brussel',
+        'url': 'http://mp3.streampower.be/stubru-high.mp3'
     },
     {
-        'name' : 'BBC Radio 1',
-        'url' : 'http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_q'
+        'name': 'BBC Radio 1',
+        'url': 'http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_q'
     },
     {
-        'name' : 'SkyRadio',
-         'url' : 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC'
+        'name': 'SkyRadio',
+        'url': 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC'
     }
 ];
-var currentRadioStation = getRandomInt(0, radioStations.length-1);
+var currentRadioStation = getRandomInt(0, radioStations.length - 1);
 
 var queue = [];
 var current = {};
 var pin = 0;
+var clients = [];
 
 var volume = {
-    "youtube" : 10,
-    "radio" : 10
+    "youtube": 10,
+    "radio": 10
 };
 
 generatePin();
@@ -57,7 +58,7 @@ module.exports.status = status;
  * Sets Youtube volume
  * @param youtubeVolume
  */
-module.exports.setYoutubeVolume = function(youtubeVolume) {
+module.exports.setYoutubeVolume = function (youtubeVolume) {
     volume.youtube = youtubeVolume;
     console.log("[protube] Youtube volume changed to " + youtubeVolume);
     ee.emit("volumeChange", volume);
@@ -67,7 +68,7 @@ module.exports.setYoutubeVolume = function(youtubeVolume) {
  * Sets radio volume
  * @param radioVolume
  */
-module.exports.setRadioVolume = function(radioVolume) {
+module.exports.setRadioVolume = function (radioVolume) {
     volume.radio = radioVolume;
     console.log("[protube] Radio volume changed to " + radioVolume);
     ee.emit("volumeChange", volume);
@@ -77,7 +78,7 @@ module.exports.setRadioVolume = function(radioVolume) {
  * Returns current volumes.
  * @returns {{youtube: number, radio: number}}
  */
-module.exports.getVolume = function() {
+module.exports.getVolume = function () {
     return volume;
 };
 
@@ -87,7 +88,7 @@ module.exports.getVolume = function() {
  * @param timeLimit
  * @param callback
  */
-module.exports.searchVideo = function(data, timeLimit, callback) {
+module.exports.searchVideo = function (data, timeLimit, callback) {
     searchVideo(data, timeLimit, callback);
 };
 
@@ -95,7 +96,7 @@ module.exports.searchVideo = function(data, timeLimit, callback) {
  * Returns current radio station.
  * @returns {{name, url}|*}
  */
-module.exports.getCurrentRadioStation = function() {
+module.exports.getCurrentRadioStation = function () {
     return radioStations[currentRadioStation];
 };
 
@@ -103,7 +104,7 @@ module.exports.getCurrentRadioStation = function() {
  * Returns radio stations.
  * @returns {*[]}
  */
-module.exports.getRadioStations = function() {
+module.exports.getRadioStations = function () {
     return radioStations;
 };
 
@@ -112,14 +113,14 @@ module.exports.getRadioStations = function() {
  * @returns {{name, url}|*}
  */
 function getRadioStation() {
-    currentRadioStation = getRandomInt(0, radioStations.length-1);
+    currentRadioStation = getRandomInt(0, radioStations.length - 1);
     return radioStations[currentRadioStation];
 }
 
 /**
  * Export for getNextVideo function.
  */
-module.exports.getNextVideo = function() {
+module.exports.getNextVideo = function () {
     getNextVideo();
 };
 
@@ -127,24 +128,24 @@ module.exports.getNextVideo = function() {
  * Returns current video
  * @returns {{current}}
  */
-module.exports.getCurrent = function() {
+module.exports.getCurrent = function () {
     return current;
 };
 
-module.exports.shuffleRadio = function() {
+module.exports.shuffleRadio = function () {
     ee.emit("radioStation", getRadioStation());
 };
 
 function getQueue() {
     var returnQueue = [];
 
-    for(var i = 0; i<queue.length; i++) {
+    for (var i = 0; i < queue.length; i++) {
         var temp = {
-            'duration' : queue[i].duration,
-            'id' : queue[i].id,
-            'progress' : queue[i].progress,
-            'showVideo' : queue[i].showVideo,
-            'title' : queue[i].title
+            'duration': queue[i].duration,
+            'id': queue[i].id,
+            'progress': queue[i].progress,
+            'showVideo': queue[i].showVideo,
+            'title': queue[i].title
         };
         returnQueue.push(temp);
     }
@@ -156,7 +157,7 @@ function getQueue() {
  * Returns Protube queue
  * @returns {Array}
  */
-module.exports.getQueue = function() {
+module.exports.getQueue = function () {
     return getQueue();
 };
 
@@ -164,7 +165,7 @@ module.exports.getQueue = function() {
  * Returns playback status
  * @returns {{playing: boolean, paused: boolean}}
  */
-module.exports.getStatus = function() {
+module.exports.getStatus = function () {
     return status;
 };
 
@@ -172,7 +173,7 @@ module.exports.getStatus = function() {
  * Sets progress to given time in seconds.
  * @param time
  */
-module.exports.setTime = function(time) {
+module.exports.setTime = function (time) {
     current.progress = time;
     ee.emit("progressChange", current.progress);
 };
@@ -180,8 +181,18 @@ module.exports.setTime = function(time) {
 /**
  * Toggles pause status for Protube
  */
-module.exports.togglePause = function() {
+module.exports.togglePause = function () {
     status.paused = !status.paused;
+    ee.emit("protubeStateChange", status);
+};
+
+/**
+ * Toggles pause status for Protube
+ */
+module.exports.togglePhotos = function () {
+    console.log(current);
+    current.showVideo = !current.showVideo;
+    status.slideshow = !current.showVideo;
     ee.emit("protubeStateChange", status);
 };
 
@@ -189,16 +200,47 @@ module.exports.togglePause = function() {
  * Returns current pin
  * @returns {number}
  */
-module.exports.getPin = function() {
+module.exports.getPin = function () {
     return pin;
 };
 
 /**
  * Generates a new pin. To be called when PIN has been used.
  */
-module.exports.generatePin = function() {
+module.exports.generatePin = function () {
     generatePin();
 };
+
+module.exports.updateClient = function (socket, client_type, user_info) {
+    var remote_addr = socket.request.connection.remoteAddress + "-" + socket.request.connection.remotePort;
+    clients[remote_addr] = {
+        user: user_info,
+        type: client_type
+    };
+    ee.emit('clientChange');
+}
+
+module.exports.removeClient = function (socket) {
+    var remote_addr = socket.request.connection.remoteAddress + "-" + socket.request.connection.remotePort;
+    delete clients[remote_addr];
+    ee.emit('clientChange');
+}
+
+module.exports.getClients = function () {
+    var results = [];
+    for (client in clients) {
+        var c = clients[client];
+        var ip = client.split('-')[0];
+        var result = {
+            type: c.type,
+            name: (c.user ? c.user.user_name : 'Anonymous'),
+            id: (c.user ? c.user.user_id : null),
+            network: (ip == process.env.PIN_IP ? 'ProTube' : (ip.startsWith("::ffff:130.89.") || ip.startsWith("2001:67c:2564:") ? 'UTwente' : 'Outside UTwente'))
+        }
+        results.push(result);
+    }
+    return results;
+}
 
 
 /**
@@ -221,7 +263,7 @@ function pad(number, length) {
  * Generates new pin
  */
 function generatePin() {
-    pin = pad(Math.round( Math.random() * 999 ), 3);
+    pin = pad(Math.round(Math.random() * 999), 3);
     ee.emit("pinChange", pin);
 }
 
@@ -230,27 +272,27 @@ function generatePin() {
  * @param index
  * @param direction
  */
-module.exports.moveQueueItem = function(index, direction) {
+module.exports.moveQueueItem = function (index, direction) {
     console.log("index", index, "direction", direction);
 
-    function moveArrayElement (array, old_index, new_index) {
+    function moveArrayElement(array, old_index, new_index) {
         array.splice(new_index, 0, array.splice(old_index, 1)[0]);
         return array; // for testing purposes
     }
 
-    switch(direction) {
+    switch (direction) {
         case 'up':
-            queue = moveArrayElement(queue, index, index-1);
+            queue = moveArrayElement(queue, index, index - 1);
             break;
         case 'down':
-            queue = moveArrayElement(queue, index, index+1);
+            queue = moveArrayElement(queue, index, index + 1);
             break;
     }
 
     ee.emit("queueUpdated", getQueue());
 };
 
-module.exports.removeQueueItem = function(index) {
+module.exports.removeQueueItem = function (index) {
     queue.splice(index, 1);
     ee.emit("queueUpdated", getQueue());
 };
@@ -261,48 +303,48 @@ module.exports.removeQueueItem = function(index) {
  * @param data
  * @param socket
  */
-module.exports.addToQueue = function(data, timeLimit) {
+module.exports.addToQueue = function (data, timeLimit) {
     http_request.get({
         url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet,contentDetails&id=' + data.id
-    }, function(err, res) {
-        if(err) {
-            console.log("[protube] Adding video resulted in error. "+err);
+    }, function (err, res) {
+        if (err) {
+            console.log("[protube] Adding video resulted in error. " + err);
         } else {
-            
+
             var response = JSON.parse(res.buffer.toString());
 
-            if(response.pageInfo.totalResults == 0) {
+            if (response.pageInfo.totalResults == 0) {
                 return false;
             }
 
             var video_data = response.items[0];
 
-            for(var i in queue) {
-                if(video_data.id == queue[i].id) {
+            for (var i in queue) {
+                if (video_data.id == queue[i].id) {
                     return false;
                 }
             }
 
             var video = {
-                "id" 		: video_data.id,
-                "title" 	: video_data.snippet.title,
-                "duration" 	: parseISO8601Duration(video_data.contentDetails.duration),
-                "progress"  : 0,
-                "showVideo" : data.showVideo,
-                "token"     : (data.token) ? data.token : null,
-                "pin"       : (data.pin) ? data.pin : null
+                "id": video_data.id,
+                "title": video_data.snippet.title,
+                "duration": parseISO8601Duration(video_data.contentDetails.duration),
+                "progress": 0,
+                "showVideo": data.showVideo,
+                "token": (data.token) ? data.token : null,
+                "pin": (data.pin) ? data.pin : null
             };
 
-            if(timeLimit) {
-                if(video.duration < process.env.YOUTUBE_MAX_DURATION) {
+            if (timeLimit) {
+                if (video.duration < process.env.YOUTUBE_MAX_DURATION) {
 
                     // Put the video on a fair place within the queue bases on previous pins.
                     var previousPincode = "";
                     var previousToken = "";
                     var foundDouble = false;
 
-                    for( var i in queue ) {
-                        if((queue[i].pin != null && queue[i].pin == previousPincode && queue[i].pin != video.pin) || (queue[i].token != null && queue[i].token == previousToken && queue[i].token != video.token)) {
+                    for (var i in queue) {
+                        if ((queue[i].pin != null && queue[i].pin == previousPincode && queue[i].pin != video.pin) || (queue[i].token != null && queue[i].token == previousToken && queue[i].token != video.token)) {
                             // Two videos from the same user found, add the video
                             console.log("[protube] Added " + video.title + " to Protube queue");
                             queue.splice(i, 0, video);
@@ -314,13 +356,13 @@ module.exports.addToQueue = function(data, timeLimit) {
                         }
                     }
 
-                    if(!foundDouble) {
+                    if (!foundDouble) {
                         // Add to the end
                         console.log("[protube] Added " + video.title + " to Protube queue");
                         queue.push(video);
                     }
                 }
-            }else{
+            } else {
                 console.log("[protube] Added " + video.title + " to Protube queue");
                 queue.push(video);
             }
@@ -338,7 +380,7 @@ module.exports.addToQueue = function(data, timeLimit) {
  * @param iso8601Duration
  * @returns {number}
  */
- function parseISO8601Duration(iso8601Duration) {
+function parseISO8601Duration(iso8601Duration) {
     var iso8601DurationRegex = /(-)?P(?:([\.,\d]+)Y)?(?:([\.,\d]+)M)?(?:([\.,\d]+)W)?(?:([\.,\d]+)D)?T(?:([\.,\d]+)H)?(?:([\.,\d]+)M)?(?:([\.,\d]+)S)?/;
     var matches = iso8601Duration.match(iso8601DurationRegex);
 
@@ -350,7 +392,7 @@ module.exports.addToQueue = function(data, timeLimit) {
     var minutes = parseFloat(matches[7] === undefined ? 0 : matches[7]);
     var seconds = parseFloat(matches[8] === undefined ? 0 : matches[8]);
 
-    return seconds + minutes*60 + hours*3600 + days*86400 + weeks*86400*7 + months*86400*31 + years*86400*365;
+    return seconds + minutes * 60 + hours * 3600 + days * 86400 + weeks * 86400 * 7 + months * 86400 * 31 + years * 86400 * 365;
 };
 
 
@@ -358,10 +400,10 @@ module.exports.addToQueue = function(data, timeLimit) {
  * Increments time and checks for finish video.
  */
 function incrementTimeAndCheckNext() {
-    if(status.playing) {
-        if(!status.paused) current.progress++;
-        if(current.progress >= current.duration) getNextVideo();
-    }else{
+    if (status.playing) {
+        if (!status.paused) current.progress++;
+        if (current.progress >= current.duration) getNextVideo();
+    } else {
         getNextVideo();
     }
 }
@@ -378,29 +420,29 @@ function getRandomInt(min, max) {
  * Gets next video from the queue, if available, and makes it current.
  */
 function getNextVideo() {
-    if(queue.length > 0) {
+    if (queue.length > 0) {
         current = queue.shift();
 
         status.playing = true;
         status.playingRadio = false;
         status.slideshow = !current.showVideo;
 
-        console.log("[protube] Playing "+current.title);
+        console.log("[protube] Playing " + current.title);
         ee.emit("protubeStateChange", status);
         ee.emit("videoChange", current);
         ee.emit("queueUpdated", getQueue());
         ee.emit("progressChange", current.progress);
-        
+
         http_request.get({
-            url: encodeURI(process.env.PLAYEDVIDEO_ENDPOINT + '?secret=' + process.env.SECRET + '&token=' + current.token + '&video_id=' + current.id + '&video_title=' + current.title)
-        }, function(err, res) {
+            url: encodeURI(process.env.PLAYEDVIDEO_ENDPOINT + '?secret=' + process.env.SECRET + '&token=' + current.token + '&video_id=' + current.id + '&video_title=' + encodeURIComponent(current.title))
+        }, function (err, res) {
             if (err) {
                 console.log("[protube] Submitting played video resulted in error. " + err);
             }
         });
-        
-    }else{
-        if(status.playing) {
+
+    } else {
+        if (status.playing) {
             status.playing = false;
             status.playingRadio = true;
             status.slideshow = true;
@@ -422,36 +464,36 @@ function searchVideo(data, timeLimit, callback) {
     console.log("[protube] Performing search for " + data);
     http_request.get({ // Get search results from Youtube API
         url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet&maxResults=50&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
-    }, function(err, res) {
+    }, function (err, res) {
 
         var searchResponse = JSON.parse(res.buffer.toString());
 
         var commaId = '';
 
-        for(var i = 0; i<searchResponse.items.length; i++) { // Create comma-separated list of video ID's
+        for (var i = 0; i < searchResponse.items.length; i++) { // Create comma-separated list of video ID's
             commaId += searchResponse.items[i].id.videoId + ',';
         }
 
-        commaId = commaId.substr(0, commaId.length-1); // Remove last ,
+        commaId = commaId.substr(0, commaId.length - 1); // Remove last ,
 
         http_request.get({ // Get video details from Youtube API, since the search API can't provide durations...
-            url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=contentDetails&maxResults=50&id='+commaId
-        }, function(err, res) {
+            url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=contentDetails&maxResults=50&id=' + commaId
+        }, function (err, res) {
 
             var detailsResponse = JSON.parse(res.buffer.toString());
 
             var returnResponse = [];
 
-            for(var i = 0; i<detailsResponse.items.length; i++) {
+            for (var i = 0; i < detailsResponse.items.length; i++) {
 
                 var duration = moment.duration(detailsResponse.items[i].contentDetails.duration);
 
-                if(!timeLimit || duration.asSeconds() < process.env.YOUTUBE_MAX_DURATION) {
+                if (!timeLimit || duration.asSeconds() < process.env.YOUTUBE_MAX_DURATION) {
                     returnResponse.push({
-                        "id" : searchResponse.items[i].id.videoId,
-                        "title" : searchResponse.items[i].snippet.title,
-                        "channelTitle" : searchResponse.items[i].snippet.channelTitle,
-                        "duration" : duration.format("mm:ss")
+                        "id": searchResponse.items[i].id.videoId,
+                        "title": searchResponse.items[i].snippet.title,
+                        "channelTitle": searchResponse.items[i].snippet.channelTitle,
+                        "duration": duration.format("mm:ss")
                     });
                 }
             }
@@ -462,8 +504,8 @@ function searchVideo(data, timeLimit, callback) {
     });
 }
 
-ee.on("skip", function() {
-   getNextVideo();
+ee.on("skip", function () {
+    getNextVideo();
 });
 
 ee.on("protubeToggle", function() {
