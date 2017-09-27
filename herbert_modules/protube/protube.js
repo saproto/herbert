@@ -25,7 +25,11 @@ var radioStations = [
     },
     {
         'name': 'SkyRadio',
-        'url': 'http://8623.live.streamtheworld.com/SKYRADIOAAC_SC'
+        'url': 'http://8573.live.streamtheworld.com/SKYRADIO_SC'
+    },
+    {
+        'name': 'Arrow Classic Rock',
+        'url': 'http://91.221.151.155:80/;?.mp3'
     }
 ];
 var currentRadioStation = getRandomInt(0, radioStations.length - 1);
