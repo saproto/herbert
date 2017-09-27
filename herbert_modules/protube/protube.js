@@ -17,7 +17,7 @@ var radioStations = [
     },
     {
         'name': 'Studio Brussel',
-        'url': 'http://mp3.streampower.be/stubru-high.mp3'
+        'url': 'http://icecast.vrtcdn.be/stubru-high.mp3'
     },
     {
         'name': 'BBC Radio 1',
