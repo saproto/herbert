@@ -215,6 +215,13 @@ module.exports.generatePin = function () {
     generatePin();
 };
 
+
+/**
+ * Update this list with clients, add new client
+ * @param socket
+ * @param client_type
+ * @param user_info
+ */
 module.exports.updateClient = function (socket, client_type, user_info) {
     var remote_addr = socket.request.connection.remoteAddress + "-" + socket.request.connection.remotePort;
     clients[remote_addr] = {
@@ -222,14 +229,23 @@ module.exports.updateClient = function (socket, client_type, user_info) {
         type: client_type
     };
     ee.emit('clientChange');
-}
+};
 
+
+/**
+ * Removes client from client list
+ * @param socket
+ */
 module.exports.removeClient = function (socket) {
     var remote_addr = socket.request.connection.remoteAddress + "-" + socket.request.connection.remotePort;
     delete clients[remote_addr];
     ee.emit('clientChange');
-}
+};
 
+/**
+ * Get clients connected to server
+ * @returns {Array}
+ */
 module.exports.getClients = function () {
     var results = [];
     for (client in clients) {
@@ -244,7 +260,7 @@ module.exports.getClients = function () {
         results.push(result);
     }
     return results;
-}
+};
 
 
 /**
@@ -296,10 +312,15 @@ module.exports.moveQueueItem = function (index, direction) {
     ee.emit("queueUpdated", getQueue());
 };
 
+/**
+ * Remove item from queue.
+ * @param index
+ */
 module.exports.removeQueueItem = function (index) {
     queue.splice(index, 1);
     ee.emit("queueUpdated", getQueue());
 };
+
 
 /**
  * Adds video to Protube queue.
@@ -312,7 +333,7 @@ module.exports.addToQueue = function (data, timeLimit) {
         url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet,contentDetails&id=' + data.id
     }, function (err, res) {
         if (err) {
-            console.log("[protube] Adding video resulted in error. " + err);
+            console.log("[protube] Adding video resulted in error: " + err);
         } else {
 
             var response = JSON.parse(res.buffer.toString());
@@ -466,45 +487,79 @@ function getNextVideo() {
  */
 function searchVideo(data, timeLimit, callback) {
     console.log("[protube] Performing search for " + data);
+
     http_request.get({ // Get search results from Youtube API
-        url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet&maxResults=50&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
+        url: 'https://www.googleapis.com/youtube/v3/playlistItems?key=' + process.env.YOUTUBE_API_KEY + '&part=contentDetails&maxResults=50&playlistId=' + data,
     }, function (err, res) {
 
-        var searchResponse = JSON.parse(res.buffer.toString());
+        if(err) console.log("[protube] error during search: ", err);
 
-        var commaId = '';
+        if(err && err.code == 404) {
+            http_request.get({ // Get search results from Youtube API
+                url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=id&maxResults=50&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
+            }, function (err, res) {
 
-        for (var i = 0; i < searchResponse.items.length; i++) { // Create comma-separated list of video ID's
-            commaId += searchResponse.items[i].id.videoId + ',';
-        }
+                if(err) console.log("[protube] error during search: ", err);
 
-        commaId = commaId.substr(0, commaId.length - 1); // Remove last ,
+                var searchResponse = JSON.parse(res.buffer.toString());
 
-        http_request.get({ // Get video details from Youtube API, since the search API can't provide durations...
-            url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=contentDetails&maxResults=50&id=' + commaId
-        }, function (err, res) {
+                var commaId = '';
 
-            var detailsResponse = JSON.parse(res.buffer.toString());
-
-            var returnResponse = [];
-
-            for (var i = 0; i < detailsResponse.items.length; i++) {
-
-                var duration = moment.duration(detailsResponse.items[i].contentDetails.duration);
-
-                if (!timeLimit || duration.asSeconds() < process.env.YOUTUBE_MAX_DURATION) {
-                    returnResponse.push({
-                        "id": searchResponse.items[i].id.videoId,
-                        "title": searchResponse.items[i].snippet.title,
-                        "channelTitle": searchResponse.items[i].snippet.channelTitle,
-                        "duration": duration.format("mm:ss")
-                    });
+                for (var i = 0; i < searchResponse.items.length; i++) { // Create comma-separated list of video ID's
+                    commaId += searchResponse.items[i].id.videoId + ',';
                 }
+
+                commaId = commaId.substr(0, commaId.length - 1); // Remove last ,
+
+                searchDetails(commaId, timeLimit, callback);
+
+            });
+
+        } else {
+
+            var searchResponse = JSON.parse(res.buffer.toString());
+
+            var commaId = '';
+
+            for (var i = 0; i < searchResponse.items.length; i++) { // Create comma-separated list of video ID's
+                commaId += searchResponse.items[i].contentDetails.videoId + ',';
             }
 
-            callback(returnResponse);
+            commaId = commaId.substr(0, commaId.length - 1); // Remove last ,
 
-        });
+            searchDetails(commaId, timeLimit, callback);
+
+        }
+
+    });
+}
+
+function searchDetails(commaId, timeLimit, callback) {
+
+    http_request.get({ // Get video details from Youtube API, since the search API can't provide durations...
+        url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet,contentDetails&maxResults=50&id=' + commaId
+    }, function (err, res) {
+
+        var detailsResponse = JSON.parse(res.buffer.toString());
+
+        var returnResponse = [];
+
+        for (var i = 0; i < detailsResponse.items.length; i++) {
+
+            var duration = moment.duration(detailsResponse.items[i].contentDetails.duration);
+
+            if (!timeLimit || duration.asSeconds() < process.env.YOUTUBE_MAX_DURATION) {
+                returnResponse.push({
+                    "id": detailsResponse.items[i].id,
+                    "title": detailsResponse.items[i].snippet.title,
+                    "channelTitle": detailsResponse.items[i].snippet.channelTitle,
+                    "duration": duration.format("mm:ss")
+                });
+            }
+        }
+
+        callback(returnResponse);
+
     });
 }
 
