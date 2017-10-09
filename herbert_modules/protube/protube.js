@@ -23,7 +23,7 @@ function updateRadioStations() {
 }
 
 updateRadioStations();
-setInterval(updateRadioStations, 10000);
+setInterval(updateRadioStations, 60000);
 
 getRadioStation();
 
