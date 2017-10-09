@@ -14,7 +14,7 @@ var radioStations = [];
 var currentRadioStation;
 
 function updateRadioStations() {
-    http_request.get({ // Get search results from Youtube API
+    http_request.get({
         url: process.env.RADIOS_ENDPOINT
     }, function (err, res) {
         radioStations = JSON.parse(res.buffer.toString())
