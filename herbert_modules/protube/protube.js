@@ -23,7 +23,7 @@ function updateRadioStations() {
 }
 
 updateRadioStations();
-setInterval(updateRadioStations, 60000);
+setInterval(updateRadioStations, 10000);
 
 getRadioStation();
 
@@ -566,6 +566,12 @@ ee.on("protubeToggle", function () {
     console.log("[protube] toggle requested");
     status.protubeOn = !status.protubeOn;
     ee.emit("protubeStateChange", status);
+    setTimeout(function () {
+        ee.emit("petraReload");
+    }, 1000);
+});
+
+ee.on("fullReload", function () {
     ee.emit("petraReload");
 });
 

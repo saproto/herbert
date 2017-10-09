@@ -37,7 +37,6 @@ function updateDisplayDefinitions() {
         }
         windowDefinitions = definitions;
         console.log("[radio] Displays refreshed.");
-        console.log(windowDefinitions)
     })
 }
 

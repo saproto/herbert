@@ -109,6 +109,10 @@ nsp.on("connection", function (socket) {
                     ee.emit("protubeToggle");
                 });
 
+                socket.on("petraReload", function () {
+                    ee.emit("petraReload");
+                });
+
                 socket.on("lampOn", function (data) {
                     http_request.get({
                         url: process.env.HELIOS_ENDPOINT + 'lampOn?secret=' + process.env.HELIOS_SECRET + '&lamp=' + data
