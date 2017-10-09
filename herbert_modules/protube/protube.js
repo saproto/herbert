@@ -571,9 +571,5 @@ ee.on("protubeToggle", function () {
     }, 1000);
 });
 
-ee.on("fullReload", function () {
-    ee.emit("petraReload");
-});
-
 // Interval for incrementing Protube time, and getting new video from queue if previous video has finished.
 var I_incrementTime = setInterval(incrementTimeAndCheckNext, 1000);

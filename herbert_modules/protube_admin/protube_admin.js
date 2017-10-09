@@ -109,7 +109,7 @@ nsp.on("connection", function (socket) {
                     ee.emit("protubeToggle");
                 });
 
-                socket.on("petraReload", function () {
+                socket.on("fullReload", function () {
                     ee.emit("petraReload");
                 });
 

@@ -62,3 +62,7 @@ ee.on("petraReload", function () {
     console.log("[petra] requesting reload");
     nsp.emit("loadPages", windowDefinitions);
 });
+
+ee.on("protubeStateChange", function (status) {
+    updateDisplayDefinitions();
+});
