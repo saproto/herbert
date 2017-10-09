@@ -10,29 +10,23 @@ require("moment-duration-format");
 
 var ee = require('../../events');
 
-var radioStations = [
-    {
-        'name': 'Qmusic',
-        'url': 'http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3'
-    },
-    {
-        'name': 'Studio Brussel',
-        'url': 'http://icecast.vrtcdn.be/stubru-high.mp3'
-    },
-    {
-        'name': 'BBC Radio 1',
-        'url': 'http://bbcmedia.ic.llnwd.net/stream/bbcmedia_radio1_mf_q'
-    },
-    {
-        'name': 'SkyRadio',
-        'url': 'http://8573.live.streamtheworld.com/SKYRADIO_SC'
-    },
-    {
-        'name': 'Arrow Classic Rock',
-        'url': 'http://91.221.151.155:80/;?.mp3'
-    }
-];
-var currentRadioStation = getRandomInt(0, radioStations.length - 1);
+var radioStations = [];
+var currentRadioStation;
+
+function updateRadioStations() {
+    http_request.get({ // Get search results from Youtube API
+        url: process.env.RADIOS_ENDPOINT
+    }, function (err, res) {
+        radioStations = JSON.parse(res.buffer.toString())
+        console.log("[radio] Radio stations refreshed.");
+    })
+}
+
+updateRadioStations();
+setInterval(updateRadioStations, 10000);
+
+getRadioStation();
+
 
 var queue = [];
 var current = {};
@@ -47,11 +41,11 @@ var volume = {
 generatePin();
 
 var status = {
-    "playing" : false,
-    "paused" : false,
-    "playingRadio" : true,
-    "slideshow" : true,
-    "protubeOn" : true
+    "playing": false,
+    "paused": false,
+    "playingRadio": true,
+    "slideshow": true,
+    "protubeOn": true
 };
 
 module.exports.queue = queue;
@@ -101,7 +95,7 @@ module.exports.searchVideo = function (data, timeLimit, callback) {
  * @returns {{name, url}|*}
  */
 module.exports.getCurrentRadioStation = function () {
-    return radioStations[currentRadioStation];
+    return currentRadioStation;
 };
 
 /**
@@ -117,8 +111,9 @@ module.exports.getRadioStations = function () {
  * @returns {{name, url}|*}
  */
 function getRadioStation() {
-    currentRadioStation = getRandomInt(0, radioStations.length - 1);
-    return radioStations[currentRadioStation];
+    currentRadioStation = radioStations[getRandomInt(0, radioStations.length - 1)];
+    console.log("current", currentRadioStation);
+    return currentRadioStation;
 }
 
 /**
@@ -492,14 +487,14 @@ function searchVideo(data, timeLimit, callback) {
         url: 'https://www.googleapis.com/youtube/v3/playlistItems?key=' + process.env.YOUTUBE_API_KEY + '&part=contentDetails&maxResults=50&playlistId=' + data,
     }, function (err, res) {
 
-        if(err) console.log("[protube] error during search: ", err);
+        if (err) console.log("[protube] error during search: ", err);
 
-        if(err && err.code == 404) {
+        if (err && err.code == 404) {
             http_request.get({ // Get search results from Youtube API
                 url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=id&maxResults=50&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
             }, function (err, res) {
 
-                if(err) console.log("[protube] error during search: ", err);
+                if (err) console.log("[protube] error during search: ", err);
 
                 var searchResponse = JSON.parse(res.buffer.toString());
 
@@ -567,7 +562,7 @@ ee.on("skip", function () {
     getNextVideo();
 });
 
-ee.on("protubeToggle", function() {
+ee.on("protubeToggle", function () {
     console.log("[protube] toggle requested");
     status.protubeOn = !status.protubeOn;
     ee.emit("protubeStateChange", status);
