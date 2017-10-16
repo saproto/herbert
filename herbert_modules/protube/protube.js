@@ -323,7 +323,7 @@ module.exports.removeQueueItem = function (index) {
  * @param data
  * @param socket
  */
-module.exports.addToQueue = function (data, timeLimit) {
+module.exports.addToQueue = function (data, timeLimit, user_info) {
     http_request.get({
         url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet,contentDetails&id=' + data.id
     }, function (err, res) {
@@ -352,7 +352,9 @@ module.exports.addToQueue = function (data, timeLimit) {
                 "progress": 0,
                 "showVideo": data.showVideo,
                 "token": (data.token) ? data.token : null,
-                "pin": (data.pin) ? data.pin : null
+                "pin": (data.pin) ? data.pin : null,
+                "name": (user_info.user_name) ? user_info.user_name : null,
+                "callingName": (user_info.callingName) ? user_info.callingName : null
             };
 
             if (timeLimit) {
