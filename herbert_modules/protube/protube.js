@@ -17,7 +17,8 @@ function updateRadioStations() {
     http_request.get({
         url: process.env.RADIOS_ENDPOINT
     }, function (err, res) {
-        radioStations = JSON.parse(res.buffer.toString())
+        if(err) console.log(err);
+        radioStations = JSON.parse(res.buffer.toString());
         console.log("[radio] Radio stations refreshed.");
     })
 }
@@ -487,8 +488,6 @@ function searchVideo(data, timeLimit, callback) {
         url: 'https://www.googleapis.com/youtube/v3/playlistItems?key=' + process.env.YOUTUBE_API_KEY + '&part=contentDetails&maxResults=50&playlistId=' + data,
     }, function (err, res) {
 
-        if (err) console.log("[protube] error during search: ", err);
-
         if (err && err.code == 404) {
             http_request.get({ // Get search results from Youtube API
                 url: 'https://www.googleapis.com/youtube/v3/search?key=' + process.env.YOUTUBE_API_KEY + '&part=id&maxResults=50&regionCode=nl&videoEmbeddable=true&type=video&q=' + data,
@@ -498,17 +497,29 @@ function searchVideo(data, timeLimit, callback) {
 
                 var searchResponse = JSON.parse(res.buffer.toString());
 
-                var commaId = '';
+                if(searchResponse.items.length > 0) {
 
-                for (var i = 0; i < searchResponse.items.length; i++) { // Create comma-separated list of video ID's
-                    commaId += searchResponse.items[i].id.videoId + ',';
+                    var commaId = '';
+
+                    for (var i = 0; i < searchResponse.items.length; i++) { // Create comma-separated list of video ID's
+                        commaId += searchResponse.items[i].id.videoId + ',';
+                    }
+
+                    commaId = commaId.substr(0, commaId.length - 1); // Remove last ,
+
+                    searchDetails(commaId, timeLimit, callback);
+
+                } else {
+
+                    searchDetails(data, timeLimit, callback);
+
                 }
 
-                commaId = commaId.substr(0, commaId.length - 1); // Remove last ,
-
-                searchDetails(commaId, timeLimit, callback);
-
             });
+
+        } else if (err) {
+
+            console.log("[protube] error during search: ", err);
 
         } else {
 
