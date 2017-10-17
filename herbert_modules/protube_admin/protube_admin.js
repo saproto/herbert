@@ -44,7 +44,7 @@ nsp.on("connection", function (socket) {
 
                 socket.emit("authenticated");
 
-                socket.emit("queue", protube.getQueue());
+                socket.emit("queue", protube.getQueue(true));
                 socket.emit("ytInfo", protube.getCurrent());
                 socket.emit("progress", protube.getCurrent().progress);
                 socket.emit("playerState", protube.getStatus());
@@ -177,11 +177,11 @@ ee.on("progressChange", function (data) {
 
 ee.on("videoChange", function (data) {
     nsp.emit("ytInfo", protube.getCurrent());
-    nsp.emit("queue", protube.getQueue());
+    nsp.emit("queue", protube.getQueue(true));
 });
 
 ee.on("queueUpdated", function (data) {
-    nsp.emit("queue", protube.getQueue());
+    nsp.emit("queue", protube.getQueue(true));
 });
 
 ee.on("protubeStateChange", function (data) {
