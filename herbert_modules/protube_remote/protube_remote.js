@@ -27,6 +27,7 @@ nsp.on("connection", function (socket) {
     var authenticated = false;
     var pin;
     var token = null;
+    var user_info = null;
 
     socket.emit("queue", protube.getQueue());
     socket.emit("ytInfo", protube.getCurrent());
@@ -47,7 +48,7 @@ nsp.on("connection", function (socket) {
                 return;
             }
 
-            var user_info = JSON.parse(res.buffer.toString());
+            user_info = JSON.parse(res.buffer.toString());
 
             protube.updateClient(socket, 'remote', user_info);
 
@@ -83,7 +84,7 @@ nsp.on("connection", function (socket) {
             socket.on("add", function (data) {
                 data.token = token;
                 data.pin = pin;
-                protube.addToQueue(data, true);
+                protube.addToQueue(data, true, user_info);
             });
 
             socket.on("search", function (data) {

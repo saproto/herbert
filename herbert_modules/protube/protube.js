@@ -136,7 +136,9 @@ module.exports.shuffleRadio = function () {
     ee.emit("radioStation", getRadioStation());
 };
 
-function getQueue() {
+function getQueue(getName) {
+    getName = (typeof getName !== 'undefined') ?  getName : false;
+
     var returnQueue = [];
 
     for (var i = 0; i < queue.length; i++) {
@@ -145,8 +147,14 @@ function getQueue() {
             'id': queue[i].id,
             'progress': queue[i].progress,
             'showVideo': queue[i].showVideo,
-            'title': queue[i].title
+            'title': queue[i].title,
+            'callingName': queue[i].callingName
         };
+
+        if(getName) {
+            temp.name = queue[i].name
+        }
+
         returnQueue.push(temp);
     }
 
@@ -157,8 +165,8 @@ function getQueue() {
  * Returns Protube queue
  * @returns {Array}
  */
-module.exports.getQueue = function () {
-    return getQueue();
+module.exports.getQueue = function (getName) {
+    return getQueue(getName);
 };
 
 /**
@@ -324,7 +332,7 @@ module.exports.removeQueueItem = function (index) {
  * @param data
  * @param socket
  */
-module.exports.addToQueue = function (data, timeLimit) {
+module.exports.addToQueue = function (data, timeLimit, user_info) {
     http_request.get({
         url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet,contentDetails&id=' + data.id
     }, function (err, res) {
@@ -353,7 +361,9 @@ module.exports.addToQueue = function (data, timeLimit) {
                 "progress": 0,
                 "showVideo": data.showVideo,
                 "token": (data.token) ? data.token : null,
-                "pin": (data.pin) ? data.pin : null
+                "pin": (data.pin) ? data.pin : null,
+                "name": (user_info) ? user_info.user_name : null,
+                "callingName": (user_info) ? user_info.calling_name : null
             };
 
             if (timeLimit) {
