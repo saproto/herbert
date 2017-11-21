@@ -19,24 +19,28 @@ function updateDisplayDefinitions() {
     http_request.get({
         url: process.env.DISPLAYS_ENDPOINT
     }, function (err, res) {
-        var gotDefinitions = JSON.parse(res.buffer.toString())
-        var definitions = [];
-        for (i in gotDefinitions) {
-            var d = gotDefinitions[i];
-            if (d.name === "ProTube") {
-                definitions.push({
-                    'url': (protube.status.protubeOn ? d.url : "https://www.saproto.nl/protube/offline"),
-                    'displayNumber': d.display
-                });
-            } else {
-                definitions.push({
-                    'url': d.url,
-                    'displayNumber': d.display
-                });
+        if(err) {
+            console.log("[petra] error: " + err);
+        } else {
+            var gotDefinitions = JSON.parse(res.buffer.toString())
+            var definitions = [];
+            for (i in gotDefinitions) {
+                var d = gotDefinitions[i];
+                if (d.name === "ProTube") {
+                    definitions.push({
+                        'url': (protube.status.protubeOn ? d.url : "https://www.saproto.nl/protube/offline"),
+                        'displayNumber': d.display
+                    });
+                } else {
+                    definitions.push({
+                        'url': d.url,
+                        'displayNumber': d.display
+                    });
+                }
             }
+            windowDefinitions = definitions;
+            console.log("[radio] Displays refreshed.");
         }
-        windowDefinitions = definitions;
-        console.log("[radio] Displays refreshed.");
     })
 }
 
