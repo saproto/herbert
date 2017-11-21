@@ -17,9 +17,12 @@ function updateRadioStations() {
     http_request.get({
         url: process.env.RADIOS_ENDPOINT
     }, function (err, res) {
-        if(err) console.log(err);
-        radioStations = JSON.parse(res.buffer.toString());
-        console.log("[radio] Radio stations refreshed.");
+        if(err) {
+            console.log(err);
+        } else {
+            radioStations = JSON.parse(res.buffer.toString());
+            console.log("[radio] Radio stations refreshed.");
+        }
     })
 }
 
