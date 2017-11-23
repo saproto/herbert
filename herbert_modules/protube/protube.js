@@ -39,7 +39,8 @@ var clients = [];
 
 var volume = {
     "youtube": 10,
-    "radio": 10
+    "radio": 10,
+    "soundboard": 10
 };
 
 generatePin();
@@ -73,6 +74,16 @@ module.exports.setYoutubeVolume = function (youtubeVolume) {
 module.exports.setRadioVolume = function (radioVolume) {
     volume.radio = radioVolume;
     console.log("[protube] Radio volume changed to " + radioVolume);
+    ee.emit("volumeChange", volume);
+};
+
+/**
+ * Sets soundboard volume
+ * @param soundboardVolume
+ */
+module.exports.setSoundboardVolume = function (soundboardVolume) {
+    volume.soundboard = soundboardVolume;
+    console.log("[protube] Soundboard volume changed to " + soundboardVolume);
     ee.emit("volumeChange", volume);
 };
 
