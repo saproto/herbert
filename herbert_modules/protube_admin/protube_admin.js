@@ -64,6 +64,10 @@ nsp.on("connection", function (socket) {
                     protube.setYoutubeVolume(data);
                 });
 
+                socket.on("setSoundboardVolume", function (data) {
+                    protube.setSoundboardVolume(data);
+                });
+
                 socket.on('skip', function () {
                     protube.getNextVideo();
                 });

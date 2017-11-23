@@ -67,6 +67,11 @@ ee.on("reloadScreens", function () {
     nsp.emit("reload");
 });
 
+ee.on("soundboard", function (data) {
+    console.log("[protube_screen] requesting soundboard sound", data);
+    nsp.emit("soundboard", data);
+});
+
 function emitProgress() {
     nsp.emit("progress", protube.getCurrent().progress);
 }

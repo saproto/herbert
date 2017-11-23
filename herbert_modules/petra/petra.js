@@ -57,11 +57,6 @@ nsp.on("connection", function (socket) {
     });
 });
 
-ee.on("soundboard", function (data) {
-    console.log("[petra] requesting soundboard sound", data);
-    nsp.emit("soundboard", data);
-});
-
 ee.on("petraReload", function () {
     console.log("[petra] requesting reload");
     nsp.emit("loadPages", windowDefinitions);
