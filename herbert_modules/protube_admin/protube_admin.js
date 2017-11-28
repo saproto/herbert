@@ -123,6 +123,10 @@ nsp.on("connection", function (socket) {
                     ee.emit("omnomcomReboot");
                 });
 
+                socket.on("protubeReboot", function() {
+                    ee.emit("protubeReboot");
+                });
+
                 socket.on("lampOn", function (data) {
                     http_request.get({
                         url: process.env.HELIOS_ENDPOINT + 'lampOn?secret=' + process.env.HELIOS_SECRET + '&lamp=' + data
