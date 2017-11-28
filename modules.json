@@ -10,6 +10,11 @@
   },
 
   {
+    "name" : "omnomcom",
+    "active" : true
+  },
+
+  {
     "name" : "protube_screen",
     "active" : true
   },
