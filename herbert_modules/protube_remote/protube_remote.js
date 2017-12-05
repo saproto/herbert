@@ -28,11 +28,12 @@ nsp.on("connection", function (socket) {
     var pin;
     var token = null;
     var user_info = null;
+    var ip = socket.request.connection.remoteAddress;
 
     socket.emit("queue", protube.getQueue());
     socket.emit("ytInfo", protube.getCurrent());
 
-    console.log("[protube_remote] remote connected");
+    console.log("[protube_remote] remote connected from", ip);
 
     protube.updateClient(socket, 'remote', null);
 
@@ -84,7 +85,7 @@ nsp.on("connection", function (socket) {
             socket.on("add", function (data) {
                 data.token = token;
                 data.pin = pin;
-                protube.addToQueue(data, true, user_info);
+                protube.addToQueue(data, true, user_info, ip);
             });
 
             socket.on("search", function (data) {

@@ -14,7 +14,9 @@ var nsp = io.of('/protube-admin');
 
 nsp.on("connection", function (socket) {
 
-    console.log("[protube_admin] admin connected");
+    var ip = socket.request.connection.remoteAddress;
+
+    console.log("[protube_admin] admin connected from", ip);
 
     socket.on('authenticate', function (token) {
 
@@ -32,7 +34,7 @@ nsp.on("connection", function (socket) {
         socket.on("disconnect", function () {
             protube.removeClient(socket);
             ee.removeListener("adminCheck", kickHandler);
-            console.log("[protube_screen] admin disconnected");
+            console.log("[protube_admin] admin disconnected");
         });
 
         adminCheck(socket, token, function (isAdmin, _user_info) {
@@ -82,7 +84,7 @@ nsp.on("connection", function (socket) {
 
                 socket.on("add", function (data) {
                     data.token = token;
-                    protube.addToQueue(data, false, user_info);
+                    protube.addToQueue(data, false, user_info, ip);
                 });
 
                 socket.on("search", function (data) {
@@ -210,4 +212,4 @@ ee.on('pinChange', function (data) {
 
 ee.on('clientChange', function () {
     nsp.emit('clients', protube.getClients());
-})
+});
