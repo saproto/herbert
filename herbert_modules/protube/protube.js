@@ -340,22 +340,27 @@ module.exports.removeQueueItem = function (index) {
 };
 
 
-function fairQueueAdd(video) {
-    // Put the video on a fair place within the queue bases on previous pins.
-    var previousPincode = "";
-    var previousToken = "";
+function fairAddToQueue(video) {
+    // Put the video on a fair place within the queue bases on UIDs.
     var foundDouble = false;
 
+    var uidAmount = {};
+    var currentUidAmount = 0;
+
+    // Count amount of videos in queue with current UID
     for (var i in queue) {
-        if ((queue[i].pin != null && queue[i].pin == previousPincode && queue[i].pin != video.pin) || (queue[i].token != null && queue[i].token == previousToken && queue[i].token != video.token)) {
-            // Two videos from the same user found, add the video
+        if(queue[i].uid === video.uid) currentUidAmount++;
+    }
+
+    // Put video in queue in fair place
+    for (var i in queue) {
+        uidAmount[queue[i].uid] = uidAmount[queue[i].uid] == null ? 1 : uidAmount[queue[i].uid] + 1;
+
+        if(uidAmount[queue[i].uid] > currentUidAmount + 1) {
             console.log("[protube] Added " + video.title + " to Protube queue");
             queue.splice(i, 0, video);
             foundDouble = true;
             break;
-        } else {
-            previousPincode = queue[i].pin;
-            previousToken = queue[i].token;
         }
     }
 
@@ -372,7 +377,7 @@ function fairQueueAdd(video) {
  * @param data
  * @param socket
  */
-module.exports.addToQueue = function (data, timeLimit, user_info) {
+module.exports.addToQueue = function (data, timeLimit, user_info, ip) {
     http_request.get({
         url: 'https://www.googleapis.com/youtube/v3/videos?key=' + process.env.YOUTUBE_API_KEY + '&part=snippet,contentDetails&id=' + data.id
     }, function (err, res) {
@@ -402,16 +407,18 @@ module.exports.addToQueue = function (data, timeLimit, user_info) {
                 "showVideo": data.showVideo,
                 "token": (data.token) ? data.token : null,
                 "pin": (data.pin) ? data.pin : null,
+                "ip": ip,
+                "uid": (user_info) ? user_info.user_id : ip,
                 "name": (user_info) ? user_info.user_name : null,
                 "callingName": (user_info) ? user_info.calling_name : null
             };
 
             if (timeLimit) {
                 if (video.duration < process.env.YOUTUBE_MAX_DURATION) {
-                    fairQueueAdd(video);
+                    fairAddToQueue(video);
                 }
             } else {
-                fairQueueAdd(video);
+                fairAddToQueue(video);
             }
 
             ee.emit("queueUpdated", getQueue());
