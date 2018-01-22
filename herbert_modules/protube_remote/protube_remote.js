@@ -103,3 +103,16 @@ nsp.on("connection", function (socket) {
     });
 
 });
+
+ee.on("videoChange", function (data) {
+    nsp.emit("ytInfo", protube.getCurrent());
+    nsp.emit("queue", protube.getQueue(false));
+});
+
+ee.on("queueUpdated", function (data) {
+    nsp.emit("queue", protube.getQueue(false));
+});
+
+ee.on("progressChange", function (data) {
+    nsp.emit("progress", data);
+});
