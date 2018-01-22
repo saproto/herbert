@@ -29,7 +29,7 @@ function updateRadioStations() {
 updateRadioStations();
 setInterval(updateRadioStations, 10000);
 
-getRadioStation();
+setTimeout(getRadioStation, 5000);
 
 
 var queue = [];
