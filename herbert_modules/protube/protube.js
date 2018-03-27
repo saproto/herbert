@@ -21,6 +21,7 @@ function updateRadioStations() {
             console.log(err);
         } else {
             radioStations = JSON.parse(res.buffer.toString());
+            ee.emit("radiostationRefresh");
             console.log("[radio] Radio stations refreshed.");
         }
     })
@@ -29,7 +30,7 @@ function updateRadioStations() {
 updateRadioStations();
 setInterval(updateRadioStations, 10000);
 
-setTimeout(getRadioStation, 5000);
+setTimeout(getRandomRadioStation, 5000);
 
 
 var queue = [];
@@ -125,7 +126,7 @@ module.exports.getRadioStations = function () {
  * Chooses random radio station from list, sets it as current and returns that station.
  * @returns {{name, url}|*}
  */
-function getRadioStation() {
+function getRandomRadioStation() {
     currentRadioStation = radioStations[getRandomInt(0, radioStations.length - 1)];
     console.log("current", currentRadioStation);
     return currentRadioStation;
@@ -147,7 +148,12 @@ module.exports.getCurrent = function () {
 };
 
 module.exports.shuffleRadio = function () {
-    ee.emit("radioStation", getRadioStation());
+    ee.emit("radioStation", getRandomRadioStation());
+};
+
+module.exports.setRadio = function (newRadioStation) {
+    currentRadioStation = radioStations[newRadioStation];
+    ee.emit("radioStation", currentRadioStation);
 };
 
 function getQueue(getName) {
@@ -500,7 +506,7 @@ function getNextVideo() {
             status.playing = false;
             status.playingRadio = true;
             status.slideshow = true;
-            ee.emit("radioStation", getRadioStation());
+            ee.emit("radioStation", getRandomRadioStation());
             ee.emit("protubeStateChange", status);
             current = {};
             ee.emit("videoChange", current);

@@ -52,6 +52,7 @@ nsp.on("connection", function (socket) {
                 socket.emit("playerState", protube.getStatus());
                 socket.emit("volume", protube.getVolume());
                 socket.emit("pin", protube.getPin());
+                socket.emit('radiostations', protube.getRadioStations());
                 ee.emit('clientChange');
 
                 socket.on('setTime', function (data) {
@@ -103,6 +104,10 @@ nsp.on("connection", function (socket) {
 
                 socket.on("shuffleRadio", function (data) {
                     protube.shuffleRadio();
+                });
+
+                socket.on("setRadio", function(data)  {
+                    protube.setRadio(data);
                 });
 
                 socket.on("reload", function (data) {
@@ -212,4 +217,8 @@ ee.on('pinChange', function (data) {
 
 ee.on('clientChange', function () {
     nsp.emit('clients', protube.getClients());
+});
+
+ee.on('radiostationRefresh', function() {
+    nsp.emit('radiostations', protube.getRadioStations());
 });
