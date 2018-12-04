@@ -32,8 +32,13 @@ nsp.on("connection", function (socket) {
         socket.emit("queue", protube.getQueue());
 
         socket.emit("ytInfo", protube.getCurrent());
-        socket.emit("progress", protube.getCurrent().progress);
         socket.emit("playerState", protube.getStatus());
+
+        // The progress is submitted with a timeout, as the Youtube player doesn't seem to be ready for this
+        // command after it's just been loaded.
+        setTimeout(function() {
+            socket.emit("progress", protube.getCurrent().progress);
+        }, 1000);
     });
 
 });
