@@ -12,6 +12,14 @@ router.get('/adminCheck', function(req, res, next) {
   res.send("OK");
 });
 
+router.get('/maxDuration', function(req, res, next) {
+    if(req.query.secret == process.env.SECRET) {
+        res.send(process.env.YOUTUBE_MAX_DURATION);
+    }else{
+        res.status(403).send("NO. :(");
+    }
+});
+
 router.get('/soundboard', function(req, res, next) {
   if(req.query.secret == process.env.SECRET) {
     ee.emit("soundboard", req.query.sound);
